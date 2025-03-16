@@ -1,0 +1,95 @@
+﻿<Window
+    x:Class="KnKModTools.UI.SettingWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:KnKModTools.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="window"
+    Title="系统设置"
+    Width="500"
+    Height="300"
+    Icon="/Resources/Icons/knk.ico"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <!--  游戏根目录  -->
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="120"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{StaticResource GameRootPath}" />
+            <TextBox
+                x:Name="GamePathBox"
+                Width="250"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{Binding GameRootPath}" />
+            <Button Click="BrowseGamePath_Click" Style="{StaticResource FolderBrowserButton}" />
+        </StackPanel>
+        <!--  脚本输出目录  -->
+        <StackPanel
+            Grid.Row="1"
+            Margin="0,0,0,10"
+            Orientation="Horizontal">
+            <TextBlock
+                Width="120"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{StaticResource ScriptOutputPath}" />
+            <TextBox
+                x:Name="ScriptPathBox"
+                Width="250"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{Binding ScriptOutputPath}" />
+            <Button Click="BrowseScriptPath_Click" Style="{StaticResource FolderBrowserButton}" />
+        </StackPanel>
+        <!--  Table语言选择  -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBlock
+                Width="120"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{StaticResource TableLanguage}" />
+            <ComboBox
+                x:Name="LangCombo"
+                Width="120"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                SelectedItem="{Binding TableLanguage}" />
+        </StackPanel>
+        <!--  按钮区域  -->
+        <StackPanel
+            Grid.Row="4"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+            <Button
+                Width="80"
+                Margin="0,0,10,0"
+                Click="SaveButton_Click"
+                Content="{StaticResource Save}"
+                FontFamily="{StaticResource GlobalFont}" />
+            <Button
+                Width="80"
+                Click="CancelButton_Click"
+                Content="{StaticResource Cancel}"
+                FontFamily="{StaticResource GlobalFont}" />
+        </StackPanel>
+    </Grid>
+</Window>

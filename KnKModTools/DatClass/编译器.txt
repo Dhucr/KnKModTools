@@ -1,0 +1,292 @@
+请设计并开发一个编译器，使用的编程语言为c#，已经安装了Esprima .Net，目标代码为javascript，编译为自定义指令与格式的字节码文件。
+从指令->字节码的功能在DatScript.cs 中实现，暂不考虑，以生成函数的指令码列表为优先。
+
+自定义指令表：
+### **0-39号指令集完整表**
+
+| 十进制 | 指令名                        | 参数说明              | 栈变化 | 等效高级代码                                
+|-------|-------------------------------|-----------------------|--------|-------------------------------------------
+| 0     | PUSH                          | (size=4, value)       | +1     | `stack.Push(DecodeValue(value))`          
+| 1     | POP                           | bytes_to_pop (4倍数)  | -(n)   | `stack.Remove(bytes/4)`                    
+| 2     | RETRIEVEELEMENTATINDEX        | 字节偏移量（负值）    | +1     | `stack.Push(*(stack_ptr + offset))`        
+| 3     | RETRIEVEELEMENTATINDEX2       | 字节偏移量（负值）    | +1     | 同上                              | 同上
+| 4     | PUSHCONVERTINTEGER            | 字节偏移量（字节）      | +1     | `stack.Push((int)Convert.ToSingle(...))`   
+| 5     | PUTBACKATINDEX                | 目标字节偏移量（负值）| -1     | `*(stack_ptr + offset) = stack.Pop()`      
+| 6     | PUTBACK                       | 目标字节偏移量 （负值）     | -1     | 同上                             
+| 7     | LOAD32                        | 全局变量索引   | +1     | `stack.Push(VariableIns[n].Value)`         
+| 8     | STORE32                       | 全局变量索引  | -1     | `VariableOuts[m].Value = stack.Pop()`      
+| 9     | LOADRESULT                    | 结果索引              | +1     | `stack.Push(returnValues[index])`          
+| 10    | SAVERESULT                    | 结果索引              | -1     | `returnValues[index] = stack.Pop()`        
+| 11    | JUMP                          | 目标地址（绝对偏移）  | 0      | `goto label`                               
+| 12    | CALL                          | 目标函数ID            | -(n+2) | 调用函数（见下方结构）                    
+| 13    | EXIT                          | 无                    | 0     | `return`                                 
+| 14    | JUMPIFTRUE                    | 目标地址（绝对偏移）    | -1     | `if (stack.Pop()) goto`                   
+| 15    | JUMPIFFALSE                   | 目标地址 （绝对偏移）   | -1     | `if (!stack.Pop()) goto`                  
+| 16-30 | 运算指令 (+ - * / == != 等)   | 无                    | -1     | 标准二元运算                              
+| 31    | NEGATIVE                      | 无                    | 0      | `-a`                                      
+| 32    | ISTRUE                        | 无                    | 0      | `(bool)a`                               
+| 33    | NOT                           | 无                    | 0      | `~(a)`                                 
+| 34    | CALLFROMANOTHERSCRIPT         | (脚本,函数,参数数)    | -(n+5) | 跨脚本调用（需压返回地址）               
+| 35    | CALLFROMANOTHERSCRIPT2        | (脚本,函数,参数数)    | -n     | 无返回地址跨脚本调用                      
+| 36    | RUNCMD                        | (cmd1, cmd2, 参数数)  | 0     | `Engine.RunCommand(...)`                
+| 37    | PUSHRETURNADDRESSFROMANOTHERSCRIPT | 返回地址      | +5     | 保存跨脚本返回地址                        
+| 38    | ADDLINEMARKER                 | 调试标记              | 0      | `// Line: X`                            
+| 39    | POP2                          | 弹出元素个数          | -count | `for(int i=0;i<count;i++) stack.Pop()`
+
+public class InStruction
+{
+    public byte Code;
+
+    public object[] Operands;
+
+	//在反编译时使用记录指令位置
+    public uint Offset;
+}
+
+public uint GetInsLength(InStruction instr)
+{
+    return (uint)instr.Code switch
+    {
+        0 => 6,
+        1 or 9 or 10 or 39 => 2,
+        12 => 3,
+        2 or 3 or 4 or 5 or 6 or 7 or 8 or 11 or 14 or 15 or 37 or 40 => 5,
+        34 or 35 => 10,
+        36 => 4,
+        _ => 1
+    };
+}
+
+public static Dictionary<byte, string> OPCode = new()
+{
+    {0, "PUSH"}, {1, "POP"}, {2, "RETRIEVEELEMENTATINDEX"}, {3, "RETRIEVEELEMENTATINDEX2"},
+    {4, "PUSHCONVERTINTEGER"}, {5, "PUTBACKATINDEX"}, {6, "PUTBACK"}, {7, "LOAD32"},
+    {8, "STORE32"}, {9, "LOADRESULT"}, {10, "SAVERESULT"}, {11, "JUMP"},
+    {12, "CALL"}, {13, "EXIT"}, {14, "JUMPIFTRUE"}, {15, "JUMPIFFALSE"},
+    {16, "+"}, {17, "-"}, {18, "*"}, {19, "/"}, {20, "%"}, {21, "=="},
+    {22, "!="}, {23, ">"}, {24, ">="}, {25, "<"}, {26, "<="},
+    {27, "&"}, {28, "|"}, {29, "&&"}, {30, "||"}, {31, "NEGATIVE"},
+    {32, "ISTRUE"}, {33, "NOT"}, {34, "CALLFROMANOTHERSCRIPT"},
+    {35, "CALLFROMANOTHERSCRIPT2"}, {36, "RUNCMD"},
+    {37, "PUSHRETURNADDRESSFROMANOTHERSCRIPT"}, {38, "ADDLINEMARKER"},
+    {39, "POP2"}, {40, "DEBUG"}, {255, "UNKNOWN"}
+};
+
+辅助方法：
+栈更新=>传入InStruction，根据Code对Stack的状态进行更新。
+栈中查找值的位置=>传入变量名，例如arg0、_temp0、Result[0]、Global.xxx等，在栈中检索他的位置，并返回。
+
+赋值表达式(包含变量声明)：
+1.左侧如果有let，则先将0x0压入栈中(同时添加PUSH指令)；
+    let _temp0 = 0.4
+    let _temp1 = 10
+    对应=>
+    PUSH(4, (uint)0)
+    PUSH(4, 0.4)
+    PUTBACKATINDEX(-4)
+    PUSH(4, (uint)0)
+    PUSH(4, 10)
+    PUTBACKATINDEX(-4)
+2.由于表达式右侧可能为函数、值、表达式等多种情况，因此应再次调用walk；
+3.1)如果赋值表达式左侧变量名由Global开头，则在全局变量数组中查找，并添加STORE32指令：
+    Global.is_armed = 1
+    对应=>
+    PUSH(4, 1)
+	STORE32(1)
+3.2)如果由Result开头，则添加SAVERESULT指令；
+    Result[1] = 0.5
+    Result[2] = "hello"
+    对应=>
+    PUSH(4, 0.5)
+    SAVERESULT(1)
+    PUSH(4, "hello")
+    SAVERESULT(2)
+3.3)否则根据变量名查询变量在栈中的位置，添加PUTBACKATINDEX指令。
+    let _temp0 = null
+    let _temp1 = null
+    _temp0 = 150
+    _temp1 = 45
+    对应=>
+    PUSH(4, (uint)0)
+    PUSH(4, (uint)0)
+    PUSH(4, 150)
+    PUTBACKATINDEX(-8)
+    PUSH(4, 45)
+    PUTBACKATINDEX(-4)
+二元运算表达式：
+1.运算式左右情况复杂，因此应再次调用walk；
+2.先左后右；
+3.根据运算符号添加对应指令。
+逻辑表达式(只包含&&和||)：
+1.同二元运算表达式。
+一元表达式(只包含-和~)：
+1.符号右侧情况复杂，因此应再次调用walk；
+2.根据运算符号添加对应指令。
+函数调用(参数均可以为空)：
+1.如果函数调用是标识符(Identifier)：
+    如果Name以IsTrue开头：
+        参数情况复杂，因此应再次调用walk；
+        添加IsTrue指令。
+        let _temp0 = 5.0
+        IsTrue(_temp0)
+        对应=>
+        PUSH(4, (uint)0)
+        PUSH(4, 5.0)
+        PUTBACKATINDEX(-4)
+        RETRIEVEELEMENTATINDEX(-4)
+        IsTrue()
+    如果Name以GetAddress开头：
+        参数情况复杂，因此应再次调用walk；
+        添加PUSHCONVERTINTEGER指令。
+        let _temp0 = 5.0
+        GetAddress(_temp0)
+        对应=>
+        PUSH(4, (uint)0)
+        PUSH(4, 5.0)
+        PUTBACKATINDEX(-4)
+        PUSHCONVERTINTEGER(-4)
+    否则：
+        向栈中压入当前函数序号并添加相应指令；
+        向栈中压入当前函数调用后的返回地址并添加相应指令；
+        参数情况复杂，因此应再次调用walk；
+        添加CALL指令。
+        set_flag(62)
+        对应=>
+        PUSH(4, 0x4A)      //函数序号
+	    PUSH(4, 0x35BC0)   //函数调用后的返回地址
+	    PUSH(4, 62)        //参数
+	    CALL(409)          //调用指令，参数为调用的函数序号
+        0x35BC0:ADDLINEMARKER(3499)//调用函数后返回地址处的指令，也可能是其他指令
+2.如果函数调用是表达式(MemberExpression)：
+    如果Object.Name是Engine：
+        参数情况复杂，因此应再次调用walk，从第二个参数开始；
+        第一个参数必定为只有两个元素的数组，提取元素为cmd1、cmd2；
+        使用cmd1、cmd2以及参数数量作为操作数添加RUNCMD指令；
+        添加POP指令，操作数为参数数量*4。
+        Engine.Run([0, 10], "Hello")
+        对应=>
+        PUSH(4, "Hello")
+        RUNCMD(0, 10, 1)
+        POP(4)
+    如果Object.Name以sc_开头：
+        参数情况复杂，因此应再次调用walk；
+        添加CALLFROMANOTHERSCRIPT2指令。
+        sc_this.AniFieldChargeAttack(5)
+        对应=>
+        PUSH(4, 5)
+        CALLFROMANOTHERSCRIPT2("this", "AniFieldChargeAttack", 1)
+        如果sc_后是All，则第一个操作数为""。
+    否则：
+        添加PUSHRETURNADDRESSFROMANOTHERSCRIPT指令；
+        参数情况复杂，因此应再次调用walk；
+        添加CALLFROMANOTHERSCRIPT指令。
+        sound_ani.SeBattleConfigDefault(5)
+        对应=>
+        PUSHRETURNADDRESSFROMANOTHERSCRIPT(0x35BC0)
+        PUSH(4, 5)
+        CALLFROMANOTHERSCRIPT("sound_ani", "SeBattleConfigDefault", 1)
+        0x35BC0:ADDLINEMARKER(3499)
+分支结构：
+1.Test情况复杂，因此应再次调用walk；
+2.视情况添加JUMPIFFALSE或JUMPIFTRUE指令；
+3.Then分支情况复杂，因此应再次调用walk；
+4.视情况添加Jump指令；
+5.Else分支情况复杂，因此应再次调用walk，但该结构中可能不存在Else分支。
+6.视情况添加Jump指令。
+7.自行判断如何添加指令。
+    在反编译时遇到的几种结构：
+        无Else分支：
+        Test条件(可能是数值、函数、表达式等)
+        JUMPIFFALSE(目标地址)
+        真值块
+        目标地址的指令
+        if-else结构1：
+        条件(可能是数值、函数、表达式等)
+        JUMPIFFALSE(假值块地址)
+        真值块
+        jump(目标地址)
+        假值块
+        目标地址的指令
+        if-else结构2，真值块为空：
+        Test条件(可能是数值、函数、表达式等)
+        JUMPIFFALSE(假值块地址)
+        jump(目标地址)
+        假值块
+        目标地址的指令
+        if-else结构3：
+        Test条件(可能是数值、函数、表达式等)
+        JUMPIFFALSE(假值块地址)
+        jump(真值块地址)
+        假值块
+        jump(目标地址)
+        真值块
+        jump(目标地址)
+        目标地址的指令
+        if-else结构4：
+        JUMPITRUE(真值块地址)
+        假值块
+        jump(目标地址)
+        真值块
+        jump(目标地址)
+        目标地址的指令
+        if-else结构5：
+        JUMPITRUE(真值块地址)
+        jump(假值块地址)
+        真值块
+        jump(目标地址)
+        假值块
+        jump(目标地址)
+        目标地址的指令
+        if-else if链：
+        由以上情况复合而成。
+        
+switch结构：
+1.Discriminant应为临时变量、全局变量、返回值、参数中的一种；
+2.对于每个Case都需要：
+    向栈中压入Discriminant并添加相应指令；
+    向栈中压入Test并添加相应指令；
+    添加==指令；
+    视情况添加JUMPIFFALSE或JUMPIFTRUE指令；
+    walk Case中的内容；
+    视情况添加Jump指令。
+    在反编译时遇到的几种结构：
+        1.(如果最后的假值块为空，或者说最后的JUMPIFFALSE的跳转地址==目标地址，则switch中没有default)
+        Test条件(必须为临时变量、全局变量、Return[n]、函数参数中的一种，条件必须是==)
+        JUMPIFFALSE(假值块地址)
+        真值块
+        jump(目标地址)
+        假值块：
+            JUMPIFFALSE(假值块地址)
+            真值块
+            jump(目标地址)
+            假值块：
+                ...
+        目标地址的指令
+        2.(如果最后的假值块为空，或者说假值块中最后的JUMP的跳转地址==目标地址，则switch中没有default)
+        Test条件(必须为临时变量、全局变量、Return[n]、函数参数中的一种，条件必须是==)
+        JUMPIFTRUE(真值块地址)
+        假值块：
+            JUMPIFTRUE(真值块地址)
+            假值块：
+                JUMPIFTRUE(真值块地址)
+                    ...
+                    JUMP(假值块地址或目标地址)
+        真值块
+        jump(目标地址)
+        真值块
+        jump(目标地址)
+        真值块
+        jump(目标地址)
+        ...
+        目标地址的指令
+return：
+1.向栈中压入Argument并添加相应指令；
+2.添加SAVERESULT指令；
+3.计算栈中剩余元素，将其全部出栈，并添加POP指令；
+4.添加EXIT指令。
+walk节点类型之Literal：
+1.添加PUSH指令。
+walk节点类型之Identifier与MemberExpression：
+1.如果Name以_temp或arg开头添加RETRIEVEELEMENTATINDEX指令。
+2.如果Result开头添加LOADRESULT指令。
+3.如果Global开头添加LOAD32指令。

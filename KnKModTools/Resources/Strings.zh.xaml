@@ -1,0 +1,269 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=netstandard">
+    <system:String x:Key="ItemId">物品ID</system:String>
+    <system:String x:Key="CharLimit">角色限制</system:String>
+    <system:String x:Key="ItemKind">物品类别</system:String>
+    <system:String x:Key="ItemSubKind">物品子类别</system:String>
+    <system:String x:Key="Icon">图标</system:String>
+    <system:String x:Key="ItemIcon">物品图标</system:String>
+    <system:String x:Key="EffectIcon">效果图标</system:String>
+    <system:String x:Key="Attr">属性</system:String>
+    <system:String x:Key="Effect">效果</system:String>
+    <system:String x:Key="EffectId">效果ID</system:String>
+    <system:String x:Key="PhysicalAttack">物理攻击力</system:String>
+    <system:String x:Key="PhysicalDefense">物理防御力</system:String>
+    <system:String x:Key="MagicAttack">魔法攻击力</system:String>
+    <system:String x:Key="MagicDefense">魔法防御力</system:String>
+    <system:String x:Key="Accuracy">命中率</system:String>
+    <system:String x:Key="Dodge">回避率</system:String>
+    <system:String x:Key="MagicDodge">魔法回避率</system:String>
+    <system:String x:Key="Critical">暴击率</system:String>
+    <system:String x:Key="UpperLimit">携带上限</system:String>
+    <system:String x:Key="Price">价格</system:String>
+    <system:String x:Key="Animation">动作</system:String>
+    <system:String x:Key="Name">名称</system:String>
+    <system:String x:Key="Description">描述</system:String>
+    <system:String x:Key="KindName">类别名称</system:String>
+    <system:String x:Key="EarthCost">地属性消耗数量</system:String>
+    <system:String x:Key="WaterCost">水属性消耗数量</system:String>
+    <system:String x:Key="FireCost">火属性消耗数量</system:String>
+    <system:String x:Key="WindCost">风属性消耗数量</system:String>
+    <system:String x:Key="TimeCost">时属性消耗数量</system:String>
+    <system:String x:Key="SpaceCost">空属性消耗数量</system:String>
+    <system:String x:Key="MirageCost">幻属性消耗数量</system:String>
+    <system:String x:Key="EarthAmount">地属性提供数量</system:String>
+    <system:String x:Key="WaterAmount">水属性提供数量</system:String>
+    <system:String x:Key="FireAmount">火属性提供数量</system:String>
+    <system:String x:Key="WindAmount">风属性提供数量</system:String>
+    <system:String x:Key="TimeAmount">时属性提供数量</system:String>
+    <system:String x:Key="SpaceAmount">空属性提供数量</system:String>
+    <system:String x:Key="MirageAmount">幻属性提供数量</system:String>
+    <system:String x:Key="UnknownArray">未知数组</system:String>
+    <system:String x:Key="Count">数组长度</system:String>
+    <system:String x:Key="RangeType">范围类型</system:String>
+    <system:String x:Key="Color">颜色标记</system:String>
+    <system:String x:Key="SubId">子ID</system:String>
+    <system:String x:Key="TextShowType">文本显示类型</system:String>
+    <system:String x:Key="SubName">子类名称</system:String>
+    <system:String x:Key="SkillRangeId">技能范围ID</system:String>
+    <system:String x:Key="Param1">参数1</system:String>
+    <system:String x:Key="Param2">参数2</system:String>
+    <system:String x:Key="Param3">参数3</system:String>
+    <system:String x:Key="Param4">参数4</system:String>
+    <system:String x:Key="Param5">参数5</system:String>
+    <system:String x:Key="Param6">参数6</system:String>
+    <system:String x:Key="InitialLevel">起始等级</system:String>
+    <system:String x:Key="MaxLevel">最大等级</system:String>
+
+    <system:String x:Key="SBoostAbilityType">S-Boost能力类型</system:String>
+    <system:String x:Key="SBoostAbilityName">S-Boost能力名称</system:String>
+    <system:String x:Key="VoiceId">语音ID</system:String>
+    <system:String x:Key="Level">等级</system:String>
+    <system:String x:Key="IdReference">引用ID</system:String>
+    <system:String x:Key="ParamIndex">参数序号</system:String>
+    <system:String x:Key="EffectName">效果名称</system:String>
+    <system:String x:Key="EffectDescription">效果描述</system:String>
+    <system:String x:Key="VoiceArray">语音列表</system:String>
+
+    <system:String x:Key="CustomSolt">自定义槽数量</system:String>
+    <system:String x:Key="FixedSolt">固定槽数量</system:String>
+    <system:String x:Key="SumSolt">槽总数</system:String>
+    <system:String x:Key="SoltInx">槽序号</system:String>
+    <system:String x:Key="UnLockLevel">槽解锁等级</system:String>
+    <system:String x:Key="SkillId">技能ID</system:String>
+
+    <system:String x:Key="Type">类型</system:String>
+    <system:String x:Key="EarthRequirement">地属性要求</system:String>
+    <system:String x:Key="WaterRequirement">水属性要求</system:String>
+    <system:String x:Key="FireRequirement">火属性要求</system:String>
+    <system:String x:Key="WindRequirement">风属性要求</system:String>
+    <system:String x:Key="TimeRequirement">时属性要求</system:String>
+    <system:String x:Key="SpaceRequirement">空属性要求</system:String>
+    <system:String x:Key="MirageRequirement">幻属性要求</system:String>
+    <system:String x:Key="BaseChance">基础触发概率</system:String>
+    <system:String x:Key="SclmBaseChance">Sclm基础触发概率</system:String>
+    <system:String x:Key="SboostChance">Sboost触发概率</system:String>
+    <system:String x:Key="SclmSboostChance">SclmSboost触发概率</system:String>
+    <system:String x:Key="FullBoostChance">FullBoos触发概率</system:String>
+    <system:String x:Key="UpgradeId">升级ID</system:String>
+    <system:String x:Key="Condition">触发条件</system:String>
+    <system:String x:Key="SkillSubstituteId">发动技能ID</system:String>
+
+    <system:String x:Key="ShopName">商店名称</system:String>
+    <system:String x:Key="ShopType">商店类型</system:String>
+    <system:String x:Key="PricePercent">商店价格百分比</system:String>
+    <system:String x:Key="ShopId">商店ID</system:String>
+    <system:String x:Key="EarthSepithExchangeRate">地之耀晶石汇率</system:String>
+    <system:String x:Key="WaterSepithExchangeRate">水之耀晶石汇率</system:String>
+    <system:String x:Key="FireSepithExchangeRate">火之耀晶石汇率</system:String>
+    <system:String x:Key="WindSepithExchangeRate">风之耀晶石汇率</system:String>
+    <system:String x:Key="TimeSepithExchangeRate">时之耀晶石汇率</system:String>
+    <system:String x:Key="SpaceSepithExchangeRate">空之耀晶石汇率</system:String>
+    <system:String x:Key="MirageSepithExchangeRate">幻之耀晶石汇率</system:String>
+    <system:String x:Key="SepithMassExchangeRate">耀晶石块汇率</system:String>
+    <system:String x:Key="TradeItem">交易物品</system:String>
+    <system:String x:Key="TradeMaterial">交易材料</system:String>
+    <system:String x:Key="TradeMaterialItemID">交易材料物品</system:String>
+
+    <system:String x:Key="CharacterId">角色ID</system:String>
+    <system:String x:Key="Text">文本</system:String>
+    <system:String x:Key="Percentage">百分比</system:String>
+    <system:String x:Key="LevelLearn">习得等级</system:String>
+    <system:String x:Key="RecoveryDelay">僵直</system:String>
+    <system:String x:Key="CastDelay">驱动</system:String>
+    <system:String x:Key="StunChance">眩晕几率</system:String>
+    <system:String x:Key="Cost">消耗</system:String>
+    <system:String x:Key="RangeAngle">扇形范围角度</system:String>
+    <system:String x:Key="RangeAttack">攻击距离</system:String>
+    <system:String x:Key="RangeMove">移动距离</system:String>
+
+    <system:String x:Key="Texture">贴图</system:String>
+    <system:String x:Key="Face">面部</system:String>
+    <system:String x:Key="Model">模型</system:String>
+    <system:String x:Key="FullName">全称</system:String>
+    <system:String x:Key="EngName">英文名称</system:String>
+
+    <system:String x:Key="Small">小幅</system:String>
+    <system:String x:Key="Medium">中幅</system:String>
+    <system:String x:Key="Large">大幅</system:String>
+
+    <system:String x:Key="WildernessPA">原野物理攻击</system:String>
+    <system:String x:Key="WildernessMA">原野魔法攻击</system:String>
+    <system:String x:Key="Null">空</system:String>
+    <system:String x:Key="Wilderness5">原野5</system:String>
+    <system:String x:Key="WildernessPowerA">原野强击</system:String>
+    <system:String x:Key="Wilderness9">原野9</system:String>
+    <system:String x:Key="KnockUp">击飞</system:String>
+    <system:String x:Key="CombatPA">战斗中物理攻击比率</system:String>
+    <system:String x:Key="CombatMA">战斗中魔法攻击比率</system:String>
+    <system:String x:Key="YoldaShadow">约尔妲之影</system:String>
+    <system:String x:Key="ScatterChips">散布芯片（敌方）</system:String>
+    <system:String x:Key="ChipAttack">芯片攻击</system:String>
+    <system:String x:Key="SIncrease">S增幅（敌方）</system:String>
+    <system:String x:Key="Rebound">反弹</system:String>
+    <system:String x:Key="ViciousInfection">感染凶毒</system:String>
+    <system:String x:Key="HolyFeather">神圣之羽</system:String>
+    <system:String x:Key="HolyFeatherUp">神圣之羽改</system:String>
+    <system:String x:Key="DevouringNightmares">吞噬恶梦</system:String>
+    <system:String x:Key="PhantomCat">幻夜之猫</system:String>
+    <system:String x:Key="DROP-00Z">有害雪茄_DROP-00Z</system:String>
+    <system:String x:Key="Unknown">未知</system:String>
+
+    <system:String x:Key="Monomer">单体/自身</system:String>
+    <system:String x:Key="MoveMonomer">移动+单体</system:String>
+    <system:String x:Key="GoalLine">目标+直线</system:String>
+    <system:String x:Key="PointLine">地点+直线</system:String>
+    <system:String x:Key="MovePointLine">移动+地点+直线</system:String>
+    <system:String x:Key="Circle">地点+圆</system:String>
+    <system:String x:Key="Sector">自身+圆/扇形/扇形直线</system:String>
+    <system:String x:Key="All">全体</system:String>
+
+    <system:String x:Key="QuestDescription">任务描述</system:String>
+    <system:String x:Key="FileName">文件名称</system:String>
+    <system:String x:Key="QuestGiver">任务发布者</system:String>
+    <system:String x:Key="RankName">难度等级</system:String>
+
+    <system:String x:Key="ElementRestrictMultiply">元素限制率</system:String>
+    <system:String x:Key="LineType">线类型</system:String>
+    <system:String x:Key="QuartzLineSlot">回路线槽</system:String>
+    <system:String x:Key="SlotLineNumber">线槽数量</system:String>
+    <system:String x:Key="RestrictionId">限制ID</system:String>
+
+    <system:String x:Key="Title">标题</system:String>
+    <system:String x:Key="BookId">书ID</system:String>
+    <system:String x:Key="PageId">页</system:String>
+    <system:String x:Key="BookText">内容</system:String>
+
+    <system:String x:Key="AchievementCategory">成就类别</system:String>
+    <system:String x:Key="AchievementId">成就ID</system:String>
+    <system:String x:Key="AchievementObjective1">激活条件</system:String>
+    <system:String x:Key="AchievementObjectiveParam1">激活参数</system:String>
+
+    <system:String x:Key="AtBonusName">AT奖励</system:String>
+    <system:String x:Key="PlayerOrFoeValue">是敌人?</system:String>
+    <system:String x:Key="GeneralAtBonusChance">基础AT奖励概率</system:String>
+    <system:String x:Key="HpHealSBonusChance">HP小恢复奖励概率</system:String>
+    <system:String x:Key="EpHealSBonusChance">EP小恢复奖励概率</system:String>
+    <system:String x:Key="CpHealSBonusChance">CP小恢复奖励概率</system:String>
+    <system:String x:Key="HpHealLBonusChance">HP大恢复奖励概率</system:String>
+    <system:String x:Key="EpHealLBonusChance">HP大恢复奖励概率</system:String>
+    <system:String x:Key="CpHealLBonusChance">HP大恢复奖励概率</system:String>
+    <system:String x:Key="UnknownBonusChance1">未知奖励概率1</system:String>
+    <system:String x:Key="UnknownBonusChance2">未知奖励概率2</system:String>
+    <system:String x:Key="UnknownBonusChance3">未知奖励概率3</system:String>
+    <system:String x:Key="UnknownBonusChance4">未知奖励概率4</system:String>
+    <system:String x:Key="UnknownBonusChance5">未知奖励概率5</system:String>
+    <system:String x:Key="UnknownBonusChance6">未知奖励概率6</system:String>
+    <system:String x:Key="UnknownBonusChance7">未知奖励概率7</system:String>
+    <system:String x:Key="UnknownBonusChance8">未知奖励概率8</system:String>
+    <system:String x:Key="UnknownBonusChance9">未知奖励概率9</system:String>
+    <system:String x:Key="UnknownBonusChance10">未知奖励概率10</system:String>
+    <system:String x:Key="UnknownBonusChance11">未知奖励概率11</system:String>
+    <system:String x:Key="DifficultyID">难度ID</system:String>
+    <system:String x:Key="PlayerDamageMultiplier">玩家伤害倍率</system:String>
+    <system:String x:Key="EnemyDamageMultiplier">敌人伤害倍率</system:String>
+    <system:String x:Key="PlayerStunDamageMultiplier">玩家昏迷伤害倍率</system:String>
+    <system:String x:Key="HpOrUnknownMulti1">玩家HP倍率</system:String>
+    <system:String x:Key="HpOrUnknownMulti2">敌人HP倍率</system:String>
+    <system:String x:Key="EnemySpdMultiplier">敌人速度倍率</system:String>
+    <system:String x:Key="ExpBonus">经验奖励</system:String>
+
+    <system:String x:Key="CharFullName">角色完整姓名</system:String>
+    <system:String x:Key="CharFirstName">角色称呼</system:String>
+    <system:String x:Key="ScenaFile">场景文件</system:String>
+    <system:String x:Key="Affiliation">隶属关系</system:String>
+    <system:String x:Key="Occupation">职业</system:String>
+    <system:String x:Key="Bonus">奖励</system:String>
+    <system:String x:Key="ItemName">物品名称</system:String>
+    <system:String x:Key="ItemDescription">物品描述</system:String>
+
+    <system:String x:Key="AttachName">附加名称</system:String>
+
+    <system:String x:Key="FilePath">文件路径</system:String>
+
+    <system:String x:Key="EventName">事件名称</system:String>
+
+    <system:String x:Key="PlaceName">地点名称</system:String>
+    <system:String x:Key="PlaceNameHighlight">地点高亮</system:String>
+    <system:String x:Key="Place">地点</system:String>
+    <system:String x:Key="JumpFile">跳转文件</system:String>
+    <system:String x:Key="XCoordinate">X坐标</system:String>
+    <system:String x:Key="YCoordinate">Y坐标</system:String>
+    <system:String x:Key="ZCoordinate">Z坐标</system:String>
+
+    <system:String x:Key="Scena">场景</system:String>
+    <system:String x:Key="ItemList">物品列表</system:String>
+
+    <system:String x:Key="NoteText">笔记文本</system:String>
+
+
+    <system:String x:Key="MainTitle">界之轨迹修改工具</system:String>
+    <system:String x:Key="File">文件</system:String>
+    <system:String x:Key="Setting">设置</system:String>
+    <system:String x:Key="Help">帮助</system:String>
+    <system:String x:Key="About">关于</system:String>
+    <system:String x:Key="TBLEdit">TBL编辑</system:String>
+    <system:String x:Key="LogPanel">保留</system:String>
+    <system:String x:Key="DebugPanel">调试面板</system:String>
+    <system:String x:Key="Test">测试</system:String>
+    <system:String x:Key="OK">确定</system:String>
+    <system:String x:Key="AddItem">添加元素</system:String>
+    <system:String x:Key="Browse">浏览...</system:String>
+    <system:String x:Key="GameRootPath">游戏根目录：</system:String>
+    <system:String x:Key="ScriptOutputPath">脚本输出目录：</system:String>
+    <system:String x:Key="TableLanguage">Table语言：</system:String>
+    <system:String x:Key="Save">保存</system:String>
+    <system:String x:Key="Cancel">取消</system:String>
+
+    <system:String x:Key="FirstRunTip">请先进行设置才能运行程序！</system:String>
+    <system:String x:Key="Loadding">加载中...</system:String>
+    <system:String x:Key="Loaded">加载完成！</system:String>
+    <system:String x:Key="CopySuccess">复制成功！</system:String>
+    <system:String x:Key="Saving">保存中...</system:String>
+    <system:String x:Key="Saved">保存完成！</system:String>
+    <system:String x:Key="Decompiling">正在反编译...</system:String>
+    <system:String x:Key="Decompiled">反编译完成！</system:String>
+    <system:String x:Key="WarningCFG">遇到不可规约流图！</system:String>
+</ResourceDictionary>
