@@ -37,6 +37,7 @@ namespace KnKModTools.UI
             FileList.ItemsSource = _tBLFileList;
 
             UIData.ShowMessage = ShowMessage;
+            GC.Collect();
         }
 
         private void FileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -170,7 +171,7 @@ namespace KnKModTools.UI
 
             //tbl = Debug.LoadTBL();
             //RunText.Text = tbl.Manager.TextPool[12].ToString();
-            //RunText.Text = CodeGenerator.GenerateCode(typeof(FreeDungeonTable), "KnKModTools.TblClass");
+            //RunText.Text = CodeGenerator.GenerateCode(typeof(BtlVoiceTable), "KnKModTools.TblClass");
 
             //var tbls = Debug.Load();
             //Debug.OrganizeFiles(tbls, "F:\\KnK\\headers");
@@ -315,6 +316,12 @@ namespace KnKModTools.UI
         private void About_MenuItem_Click(object sender, RoutedEventArgs e)
         {
             new AboutWindow().ShowDialog();
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            Growl.ClearGlobal();
+            GC.Collect();
         }
     }
 }

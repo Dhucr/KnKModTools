@@ -47,7 +47,13 @@ namespace KnKModTools.TblClass
             {"t_topic", TopicTableHelper.DeSerialize},
             {"t_tips", TipsTableHelper.DeSerialize},
             {"t_notemenu", NoteMenuTableHelper.DeSerialize},
-            {"t_free_dungeon", FreeDungeonTableHelper.DeSerialize}
+            {"t_free_dungeon", FreeDungeonTableHelper.DeSerialize},
+            {"t_voice", VoiceTableHelper.DeSerialize},
+            {"t_voice_subtitle", VoiceSubTitleTableHelper.DeSerialize},
+            {"t_active_voice", ActiveVoiceTableHelper.DeSerialize},
+            {"t_bgmset", BGMSetTableHelper.DeSerialize},
+            {"t_bgm", BGMTableHelper.DeSerialize},
+            {"t_btl_voice", BtlVoiceTableHelper.DeSerialize}
         };
 
         public static readonly Dictionary<string, Action<BinaryWriter, TBL>> TBLSaveMap = new()
@@ -90,7 +96,13 @@ namespace KnKModTools.TblClass
             {"t_topic", TopicTableHelper.Serialize},
             {"t_tips", TipsTableHelper.Serialize},
             {"t_notemenu", NoteMenuTableHelper.Serialize},
-            {"t_free_dungeon", FreeDungeonTableHelper.Serialize}
+            {"t_free_dungeon", FreeDungeonTableHelper.Serialize},
+            {"t_voice", VoiceTableHelper.Serialize},
+            {"t_voice_subtitle", VoiceSubTitleTableHelper.Serialize},
+            {"t_active_voice", ActiveVoiceTableHelper.Serialize},
+            {"t_bgmset", BGMSetTableHelper.Serialize},
+            {"t_bgm", BGMTableHelper.Serialize},
+            {"t_btl_voice", BtlVoiceTableHelper.Serialize}
         };
     }
 }

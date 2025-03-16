@@ -139,8 +139,8 @@ namespace KnKModTools
         {
             Dispatcher.Invoke(() =>
             {
-                Title = $"{Utilities.GetDisplayName("Loadding")}{v} / 40";
-                if (v == 40)
+                Title = $"{Utilities.GetDisplayName("Loadding")}{v} / 46";
+                if (v == 46)
                 {
                     ShowMessage(Utilities.GetDisplayName("Loaded"), InfoType.Success);
                     var window = new TBLWindow();

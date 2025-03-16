@@ -9,9 +9,10 @@
     Title="{StaticResource MainTitle}"
     Width="1400"
     Height="800"
+    Icon="/Resources/Icons/knk.ico"
     KeyDown="Window_KeyDown"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Icon="/Resources/Icons/knk.ico">
+    mc:Ignorable="d" Closed="Window_Closed">
     <Grid>
         <!--  定义三行布局：菜单栏、工具栏、工作区  -->
         <Grid.RowDefinitions>
