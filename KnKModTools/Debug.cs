@@ -222,7 +222,7 @@ namespace KnKModTools
             //tbl.Handler.InserNode(newNode, tbl.ConditionHelpList.Last(), data);
         }
 
-        private static StreamWriter sw = new("G:\\Log1.txt");
+        private static StreamWriter sw = new(Path.Combine(Environment.CurrentDirectory, "log.txt"));
 
         public static void Log(string log)
         {
