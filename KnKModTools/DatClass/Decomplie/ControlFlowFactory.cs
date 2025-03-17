@@ -82,6 +82,10 @@ namespace KnKModTools.DatClass.Decomplie
 
                 return node;
             }
+            else if (IsEmptyBlock(trueBlock, falseBlock))
+            {
+                return null;
+            }
             else
             {
                 UIData.ShowMessage(Utilities.GetDisplayName("WarningCFG"), 
@@ -124,7 +128,7 @@ namespace KnKModTools.DatClass.Decomplie
 
                 return node;
             }
-            else if (IsFSingleIfStructure(trueBlock))
+            else if (IsFSingleIfStructure(core, block, trueBlock))
             {
                 var node = new IfStatementNode
                 {
@@ -133,6 +137,10 @@ namespace KnKModTools.DatClass.Decomplie
                 };
 
                 return node;
+            }
+            else if(IsEmptyBlock(trueBlock, falseBlock))
+            {
+                return null;
             }
             else
             {
@@ -353,6 +361,10 @@ namespace KnKModTools.DatClass.Decomplie
         #endregion 块节点构建
 
         #region 逻辑结构判断
+        private static bool IsEmptyBlock(BasicBlock trueBlock, BasicBlock falseBlock)
+        {
+            return trueBlock == null && falseBlock == null;
+        }
 
         private static bool IsWhileStructure(BasicBlock header, BasicBlock trueBlock)
         {
@@ -367,12 +379,12 @@ namespace KnKModTools.DatClass.Decomplie
             return trueJumpAddr < (uint)laseHeaderBlock.Operands[0];
         }
 
-        private static bool IsFSingleIfStructure(BasicBlock trueBlock)
+        private static bool IsFSingleIfStructure(DecompilerCore core, BasicBlock block, BasicBlock trueBlock)
         {
             if (trueBlock == null) return false;
 
             // 特征1：真分支没有终止跳转
-            return trueBlock.Type != BlockType.Jump;
+            return (trueBlock.Type != BlockType.Jump) || (core.GetAddress(block) == core.GetAddress(trueBlock));
         }
 
         private static bool IsTSingleIfStructure(DecompilerCore core, 
