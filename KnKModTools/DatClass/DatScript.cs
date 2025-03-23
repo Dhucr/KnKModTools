@@ -409,6 +409,7 @@ namespace KnKModTools.DatClass
                     reader.BaseStream.Position = originalPosition;
                     text = text.Replace("\n", "\\n");
                     return text;
+                    //return "\"" + text + "\"";
                 //default: return $"0x{actualValue:X}";
                 default: return (uint)actualValue;
             }

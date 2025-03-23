@@ -1,9 +1,11 @@
 ﻿using HandyControl.Controls;
 using KnKModTools.TblClass;
 using KnKModTools.UI;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ComboBox = System.Windows.Controls.ComboBox;
 
@@ -38,17 +40,26 @@ namespace KnKModTools.Helper
             {
                 Header = header,
                 SelectedValuePath = valuePath,
-                SelectedValueBinding = new Binding(bindingPath),
+                SelectedValueBinding = new Binding(bindingPath) { Converter = new IDToSelectItemConverter() },
                 ItemsSource = array,
                 ElementStyle = GetVirtualizedComboBoxStyle(),
                 EditingElementStyle = GetVirtualizedComboBoxStyle(),
-                IsReadOnly = false
+                IsReadOnly = false,
             };
 
             column.ElementStyle.Setters.Add(new Setter(ComboBox.VerticalAlignmentProperty, VerticalAlignment.Center));
             column.ElementStyle.Setters.Add(new Setter(ComboBox.HorizontalAlignmentProperty, HorizontalAlignment.Center));
 
             return column;
+        }
+
+        private static T FindParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            while (child != null && child is not T)
+            {
+                child = VisualTreeHelper.GetParent(child);
+            }
+            return child as T;
         }
 
         public static DataGridTemplateColumn AddImageComboBoxColumn(string header, BitmapSource[] array, string bindingPath, int imageWidth = 36, int imageHeight = 36)
@@ -78,7 +89,10 @@ namespace KnKModTools.Helper
             var comboBoxFactory = new FrameworkElementFactory(typeof(ComboBox));
             comboBoxFactory.SetValue(ComboBox.ItemsSourceProperty, WrapWithIndex(array)); // 设置 ItemsSource
             comboBoxFactory.SetValue(ComboBox.SelectedValuePathProperty, "Index"); // 绑定到索引
-            comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding(bindingPath)); // 绑定到 ViewModel 属性
+            comboBoxFactory.SetBinding(ComboBox.SelectedValueProperty, new Binding(bindingPath)
+            {
+                Converter = new ImageToIndexConverter()
+            }); // 绑定到 ViewModel 属性
             comboBoxFactory.SetValue(ComboBox.ItemTemplateProperty, CreateImageItemTemplate(imageWidth, imageHeight)); // 设置 ItemTemplate
             comboBoxFactory.SetValue(ComboBox.StyleProperty, UIHelper.GetVirtualizedComboBoxStyle());
             cellEditingTemplate.VisualTree = comboBoxFactory;
@@ -89,6 +103,17 @@ namespace KnKModTools.Helper
 
             return column;
         }
+
+        public static int IsNumber(object value) => value switch
+        {
+            int i => i,
+            uint ui => (int)ui,
+            ushort us => (int)us,
+            short s => (int)s,
+            ulong ul => (int)ul,
+            long l => (int)l,
+            _ => throw new InvalidDataException($"无效的计数属性类型: {value.GetType()}")
+        };
 
         private static IEnumerable<ImageWithIndex> WrapWithIndex(BitmapSource[] array)
         {
