@@ -31,34 +31,17 @@ namespace KnKModTools.TblClass
             if (subHeader_EventSubGroupData1s != null)
             {
                 br.BaseStream.Seek(subHeader_EventSubGroupData1s.DataOffset, SeekOrigin.Begin);
-                obj.EventSubGroupData1s = new EventSubGroupData[subHeader_EventSubGroupData1s.NodeCount];
+                obj.EventSubGroupDatas = new EventSubGroupData[subHeader_EventSubGroupData1s.NodeCount];
                 for (var i = 0; i < subHeader_EventSubGroupData1s.NodeCount; i++)
                 {
-                    obj.EventSubGroupData1s[i] = EventSubGroupDataHelper.DeSerialize(br);
+                    obj.EventSubGroupDatas[i] = EventSubGroupDataHelper.DeSerialize(br);
                 }
             }
             else
             {
-                obj.EventSubGroupData1s = Array.Empty<EventSubGroupData>();
+                obj.EventSubGroupDatas = Array.Empty<EventSubGroupData>();
             }
-            obj.NodeDatas.Add(subHeader_EventSubGroupData1s, obj.EventSubGroupData1s);
-            // 处理SubHeader关联数组: EventSubGroupData2s
-            SubHeader? subHeader_EventSubGroupData2s = obj.Nodes
-                .LastOrDefault(n => n.DisplayName == "EventSubGroupData");
-            if (subHeader_EventSubGroupData2s != null)
-            {
-                br.BaseStream.Seek(subHeader_EventSubGroupData2s.DataOffset, SeekOrigin.Begin);
-                obj.EventSubGroupData2s = new EventSubGroupData[subHeader_EventSubGroupData2s.NodeCount];
-                for (var i = 0; i < subHeader_EventSubGroupData2s.NodeCount; i++)
-                {
-                    obj.EventSubGroupData2s[i] = EventSubGroupDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.EventSubGroupData2s = Array.Empty<EventSubGroupData>();
-            }
-            obj.NodeDatas.Add(subHeader_EventSubGroupData2s, obj.EventSubGroupData2s);
+            obj.NodeDatas.Add(subHeader_EventSubGroupData1s, obj.EventSubGroupDatas);
             // 处理SubHeader关联数组: EventTableDatas
             SubHeader? subHeader_EventTableDatas = obj.Nodes
                 .FirstOrDefault(n => n.DisplayName == "EventTableData");
@@ -116,19 +99,7 @@ namespace KnKModTools.TblClass
                 bw.BaseStream.Seek(subHeader_EventSubGroupData1s.DataOffset, SeekOrigin.Begin);
                 for (var i = 0; i < subHeader_EventSubGroupData1s.NodeCount; i++)
                 {
-                    EventSubGroupDataHelper.Serialize(bw, obj.EventSubGroupData1s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: EventSubGroupData2s
-            SubHeader? subHeader_EventSubGroupData2s = obj.Nodes
-                .LastOrDefault(n => n.DisplayName == "EventSubGroupData");
-            if (subHeader_EventSubGroupData2s != null)
-            {
-                bw.BaseStream.Seek(subHeader_EventSubGroupData2s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_EventSubGroupData2s.NodeCount; i++)
-                {
-                    EventSubGroupDataHelper.Serialize(bw, obj.EventSubGroupData2s[i]);
+                    EventSubGroupDataHelper.Serialize(bw, obj.EventSubGroupDatas[i]);
                 }
             }
 

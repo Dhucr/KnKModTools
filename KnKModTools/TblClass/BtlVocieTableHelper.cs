@@ -15,34 +15,17 @@ namespace KnKModTools.TblClass
             if (subHeader_BTLVoiceTable1s != null)
             {
                 br.BaseStream.Seek(subHeader_BTLVoiceTable1s.DataOffset, SeekOrigin.Begin);
-                obj.BTLVoiceTable1s = new BTLVoiceTable[subHeader_BTLVoiceTable1s.NodeCount];
+                obj.BTLVoiceTables = new BTLVoiceTable[subHeader_BTLVoiceTable1s.NodeCount];
                 for (int i = 0; i < subHeader_BTLVoiceTable1s.NodeCount; i++)
                 {
-                    obj.BTLVoiceTable1s[i] = BTLVoiceTableHelper.DeSerialize(br);
+                    obj.BTLVoiceTables[i] = BTLVoiceTableHelper.DeSerialize(br);
                 }
             }
             else
             {
-                obj.BTLVoiceTable1s = Array.Empty<BTLVoiceTable>();
+                obj.BTLVoiceTables = Array.Empty<BTLVoiceTable>();
             }
-            obj.NodeDatas.Add(subHeader_BTLVoiceTable1s, obj.BTLVoiceTable1s);
-            // 处理SubHeader关联数组: BTLVoiceTable2s
-            var subHeader_BTLVoiceTable2s = obj.Nodes
-                .LastOrDefault(n => n.DisplayName == "BTLVoiceTable");
-            if (subHeader_BTLVoiceTable2s != null)
-            {
-                br.BaseStream.Seek(subHeader_BTLVoiceTable2s.DataOffset, SeekOrigin.Begin);
-                obj.BTLVoiceTable2s = new BTLVoiceTable[subHeader_BTLVoiceTable2s.NodeCount];
-                for (int i = 0; i < subHeader_BTLVoiceTable2s.NodeCount; i++)
-                {
-                    obj.BTLVoiceTable2s[i] = BTLVoiceTableHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.BTLVoiceTable2s = Array.Empty<BTLVoiceTable>();
-            }
-            obj.NodeDatas.Add(subHeader_BTLVoiceTable2s, obj.BTLVoiceTable2s);
+            obj.NodeDatas.Add(subHeader_BTLVoiceTable1s, obj.BTLVoiceTables);
 
             var list = new List<IDataPointer>();
             obj.Pointers = new Dictionary<OffsetKey, IDataPointer>();
@@ -71,19 +54,7 @@ namespace KnKModTools.TblClass
                 bw.BaseStream.Seek(subHeader_BTLVoiceTable1s.DataOffset, SeekOrigin.Begin);
                 for (int i = 0; i < subHeader_BTLVoiceTable1s.NodeCount; i++)
                 {
-                    BTLVoiceTableHelper.Serialize(bw, obj.BTLVoiceTable1s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: BTLVoiceTable2s
-            var subHeader_BTLVoiceTable2s = obj.Nodes
-                .LastOrDefault(n => n.DisplayName == "BTLVoiceTable");
-            if (subHeader_BTLVoiceTable2s != null)
-            {
-                bw.BaseStream.Seek(subHeader_BTLVoiceTable2s.DataOffset, SeekOrigin.Begin);
-                for (int i = 0; i < subHeader_BTLVoiceTable2s.NodeCount; i++)
-                {
-                    BTLVoiceTableHelper.Serialize(bw, obj.BTLVoiceTable2s[i]);
+                    BTLVoiceTableHelper.Serialize(bw, obj.BTLVoiceTables[i]);
                 }
             }
 

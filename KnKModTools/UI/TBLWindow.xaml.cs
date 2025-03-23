@@ -171,7 +171,7 @@ namespace KnKModTools.UI
 
             //tbl = Debug.LoadTBL();
             //RunText.Text = tbl.Manager.TextPool[12].ToString();
-            //RunText.Text = CodeGenerator.GenerateCode(typeof(BtlVoiceTable), "KnKModTools.TblClass");
+            RunText.Text = CodeGenerator.GenerateCode(typeof(ArtsdriverTable), "KnKModTools.TblClass");
 
             //var tbls = Debug.Load();
             //Debug.OrganizeFiles(tbls, "F:\\KnK\\headers");
@@ -276,6 +276,16 @@ namespace KnKModTools.UI
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
+                
+                /*var dat = new DatScript();
+                dat.Load(dialog.FileName);
+                var core = new DecompilerCore(dat);
+                using var sw = new StreamWriter(
+                    Path.Combine(GlobalSetting.Setting.OutputDir,
+                    Path.GetFileNameWithoutExtension(dialog.FileName) + ".js"));
+                sw.Write(core.DecompileDatScript());
+                sw.Flush();*/
+
                 var syncLock = new object();
                 var exceptions = new ConcurrentQueue<Exception>();
                 ShowMessage(Utilities.GetDisplayName("Decompiling"));
@@ -303,9 +313,9 @@ namespace KnKModTools.UI
                         }
                     });
 
-                    if (!exceptions.IsEmpty)
+                    if (!exceptions.IsEmpty && exceptions.TryDequeue(out var ex))
                     {
-                        throw new AggregateException(exceptions);
+                        ShowMessage(ex.Message, InfoType.Error);
                     }
 
                     ShowMessage(Utilities.GetDisplayName("Decompiled"), InfoType.Success);

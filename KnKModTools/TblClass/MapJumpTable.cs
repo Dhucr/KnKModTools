@@ -16,38 +16,10 @@
 
         [FieldIndexAttr(6)]
         [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData1s { get; set; }
-
-        [FieldIndexAttr(7)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData2s { get; set; }
-
-        [FieldIndexAttr(8)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData3s { get; set; }
-
-        [FieldIndexAttr(9)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData4s { get; set; }
-
-        [FieldIndexAttr(10)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData5s { get; set; }
-
-        [FieldIndexAttr(11)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData6s { get; set; }
-
-        [FieldIndexAttr(12)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData7s { get; set; }
-
-        [FieldIndexAttr(13)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "MapJumpSpotData")]
-        public MapJumpSpotData[] MapJumpSpotData8s { get; set; }
+        public MapJumpSpotData[] MapJumpSpotDatas { get; set; }
 
         public static DataPoolManager SManager;
-        public object TBLSubheader;
+        //public object TBLSubheader;
     }
 
     public class MapJumpWorldData

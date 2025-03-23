@@ -25,7 +25,7 @@ namespace KnKModTools.UI
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            NodeList.ItemsSource = _tbl.Nodes;
+            NodeList.ItemsSource = _tbl.NodeDatas.Keys;
         }
 
         private void NodeList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -156,7 +156,7 @@ namespace KnKModTools.UI
             DataPool.Columns.Clear();
             _tbl = UIData.CurrentTbl;
             NodeList.ItemsSource = null;
-            NodeList.ItemsSource = _tbl.Nodes;
+            NodeList.ItemsSource = _tbl.NodeDatas.Keys;
         }
     }
 }

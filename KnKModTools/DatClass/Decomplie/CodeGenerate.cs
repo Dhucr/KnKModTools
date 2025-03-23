@@ -55,7 +55,7 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else
             {
-                Output.AppendLine(" * @param InArgs: No input arguments.");
+                Output.AppendLine(" * @param InArgs: Empty");
             }
             // 输出参数
             if (structInfo.OutArgs != null && structInfo.OutArgs.Length > 0)
@@ -65,7 +65,7 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else
             {
-                Output.AppendLine(" * @param OutArgs: No output arguments.");
+                Output.AppendLine(" * @param OutArgs: Empty");
             }
             // 哈希值
             Output.AppendLine($" * @hash {structInfo.Hash}");

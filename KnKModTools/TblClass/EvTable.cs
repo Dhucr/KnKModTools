@@ -6,15 +6,11 @@
         [BinStreamAttr(UseSubHeader = true, SubHeaderName = "EventGroupData")]
         public EventGroupData[] EventGroupDatas { get; set; }
 
-        [FieldIndexAttr(3)]
+        [FieldIndexAttr(4)]
         [BinStreamAttr(UseSubHeader = true, SubHeaderName = "EventSubGroupData")]
-        public EventSubGroupData[] EventSubGroupData1s { get; set; }
+        public EventSubGroupData[] EventSubGroupDatas { get; set; }
 
-        [FieldIndexAttr(3)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "EventSubGroupData")]
-        public EventSubGroupData[] EventSubGroupData2s { get; set; }
-
-        [FieldIndexAttr(3)]
+        [FieldIndexAttr(5)]
         [BinStreamAttr(UseSubHeader = true, SubHeaderName = "EventTableData")]
         public EventTableData[] EventTableDatas { get; set; }
 

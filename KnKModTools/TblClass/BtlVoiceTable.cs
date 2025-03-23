@@ -10,11 +10,7 @@ namespace KnKModTools.TblClass
     {
         [FieldIndexAttr(3)]
         [BinStreamAttr(UseSubHeader = true, SubHeaderName = "BTLVoiceTable")]
-        public BTLVoiceTable[] BTLVoiceTable1s { get; set; }
-
-        [FieldIndexAttr(4)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "BTLVoiceTable")]
-        public BTLVoiceTable[] BTLVoiceTable2s { get; set; }
+        public BTLVoiceTable[] BTLVoiceTables { get; set; }
 
         public static DataPoolManager SManager;
         //public object TBLSubheader;

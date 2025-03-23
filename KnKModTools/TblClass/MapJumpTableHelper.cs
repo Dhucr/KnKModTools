@@ -66,129 +66,17 @@ namespace KnKModTools.TblClass
             if (subHeader_MapJumpSpotData1s != null)
             {
                 br.BaseStream.Seek(subHeader_MapJumpSpotData1s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData1s = new MapJumpSpotData[subHeader_MapJumpSpotData1s.NodeCount];
+                obj.MapJumpSpotDatas = new MapJumpSpotData[subHeader_MapJumpSpotData1s.NodeCount];
                 for (var i = 0; i < subHeader_MapJumpSpotData1s.NodeCount; i++)
                 {
-                    obj.MapJumpSpotData1s[i] = MapJumpSpotDataHelper.DeSerialize(br);
+                    obj.MapJumpSpotDatas[i] = MapJumpSpotDataHelper.DeSerialize(br);
                 }
             }
             else
             {
-                obj.MapJumpSpotData1s = Array.Empty<MapJumpSpotData>();
+                obj.MapJumpSpotDatas = Array.Empty<MapJumpSpotData>();
             }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData1s, obj.MapJumpSpotData1s);
-            // 处理SubHeader关联数组: MapJumpSpotData2s
-            SubHeader? subHeader_MapJumpSpotData2s = subHeader_MapJumpSpotDatas[1];
-            if (subHeader_MapJumpSpotData2s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData2s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData2s = new MapJumpSpotData[subHeader_MapJumpSpotData2s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData2s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData2s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData2s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData2s, obj.MapJumpSpotData2s);
-            // 处理SubHeader关联数组: MapJumpSpotData3s
-            SubHeader? subHeader_MapJumpSpotData3s = subHeader_MapJumpSpotDatas[2];
-            if (subHeader_MapJumpSpotData3s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData3s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData3s = new MapJumpSpotData[subHeader_MapJumpSpotData3s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData3s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData3s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData3s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData3s, obj.MapJumpSpotData3s);
-            // 处理SubHeader关联数组: MapJumpSpotData4s
-            SubHeader? subHeader_MapJumpSpotData4s = subHeader_MapJumpSpotDatas[3];
-            if (subHeader_MapJumpSpotData4s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData4s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData4s = new MapJumpSpotData[subHeader_MapJumpSpotData4s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData4s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData4s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData4s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData4s, obj.MapJumpSpotData4s);
-            // 处理SubHeader关联数组: MapJumpSpotData5s
-            SubHeader? subHeader_MapJumpSpotData5s = subHeader_MapJumpSpotDatas[4];
-            if (subHeader_MapJumpSpotData5s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData5s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData5s = new MapJumpSpotData[subHeader_MapJumpSpotData5s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData5s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData5s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData5s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData5s, obj.MapJumpSpotData5s);
-            // 处理SubHeader关联数组: MapJumpSpotData6s
-            SubHeader? subHeader_MapJumpSpotData6s = subHeader_MapJumpSpotDatas[5];
-            if (subHeader_MapJumpSpotData6s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData6s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData6s = new MapJumpSpotData[subHeader_MapJumpSpotData6s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData6s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData6s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData6s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData6s, obj.MapJumpSpotData6s);
-            // 处理SubHeader关联数组: MapJumpSpotData7s
-            SubHeader? subHeader_MapJumpSpotData7s = subHeader_MapJumpSpotDatas[6];
-            if (subHeader_MapJumpSpotData7s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData7s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData7s = new MapJumpSpotData[subHeader_MapJumpSpotData7s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData7s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData7s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData7s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData7s, obj.MapJumpSpotData7s);
-            // 处理SubHeader关联数组: MapJumpSpotData8s
-            SubHeader? subHeader_MapJumpSpotData8s = subHeader_MapJumpSpotDatas[7];
-            if (subHeader_MapJumpSpotData8s != null)
-            {
-                br.BaseStream.Seek(subHeader_MapJumpSpotData8s.DataOffset, SeekOrigin.Begin);
-                obj.MapJumpSpotData8s = new MapJumpSpotData[subHeader_MapJumpSpotData8s.NodeCount];
-                for (var i = 0; i < subHeader_MapJumpSpotData8s.NodeCount; i++)
-                {
-                    obj.MapJumpSpotData8s[i] = MapJumpSpotDataHelper.DeSerialize(br);
-                }
-            }
-            else
-            {
-                obj.MapJumpSpotData8s = Array.Empty<MapJumpSpotData>();
-            }
-            obj.NodeDatas.Add(subHeader_MapJumpSpotData8s, obj.MapJumpSpotData8s);
+            obj.NodeDatas.Add(subHeader_MapJumpSpotData1s, obj.MapJumpSpotDatas);
 
             var list = new List<IDataPointer>();
             obj.Pointers = [];
@@ -253,84 +141,7 @@ namespace KnKModTools.TblClass
                 bw.BaseStream.Seek(subHeader_MapJumpSpotData1s.DataOffset, SeekOrigin.Begin);
                 for (var i = 0; i < subHeader_MapJumpSpotData1s.NodeCount; i++)
                 {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData1s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData2s
-            SubHeader subHeader_MapJumpSpotData2s = subHeader_MapJumpSpotDatas[1];
-            if (subHeader_MapJumpSpotData2s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData2s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData2s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData2s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData3s
-            SubHeader subHeader_MapJumpSpotData3s = subHeader_MapJumpSpotDatas[2];
-            if (subHeader_MapJumpSpotData3s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData3s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData3s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData3s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData4s
-            SubHeader subHeader_MapJumpSpotData4s = subHeader_MapJumpSpotDatas[3];
-            if (subHeader_MapJumpSpotData4s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData4s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData4s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData4s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData5s
-            SubHeader subHeader_MapJumpSpotData5s = subHeader_MapJumpSpotDatas[4];
-            if (subHeader_MapJumpSpotData5s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData5s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData5s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData5s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData6s
-            SubHeader subHeader_MapJumpSpotData6s = subHeader_MapJumpSpotDatas[5];
-            if (subHeader_MapJumpSpotData6s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData6s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData6s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData6s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData7s
-            SubHeader subHeader_MapJumpSpotData7s = subHeader_MapJumpSpotDatas[6];
-            if (subHeader_MapJumpSpotData7s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData7s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData7s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData7s[i]);
-                }
-            }
-
-            // 处理SubHeader关联数组的序列化: MapJumpSpotData8s
-            SubHeader subHeader_MapJumpSpotData8s = subHeader_MapJumpSpotDatas[7];
-            if (subHeader_MapJumpSpotData8s != null)
-            {
-                bw.BaseStream.Seek(subHeader_MapJumpSpotData8s.DataOffset, SeekOrigin.Begin);
-                for (var i = 0; i < subHeader_MapJumpSpotData8s.NodeCount; i++)
-                {
-                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotData8s[i]);
+                    MapJumpSpotDataHelper.Serialize(bw, obj.MapJumpSpotDatas[i]);
                 }
             }
 

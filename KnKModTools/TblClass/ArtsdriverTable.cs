@@ -7,7 +7,12 @@
         public SlotOpenRate[] SlotOpenRates { get; set; }
 
         [FieldIndexAttr(4)]
-        public DriverTableData[] DriverTableDatas { get; set; }
+        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "DriverBaseTableData")]
+        public DriverBaseTableData[] DriverBaseTableDatas { get; set; }
+
+        [FieldIndexAttr(5)]
+        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "DriverArtsTableData")]
+        public DriverArtsTableData[] DriverArtsTableDatas { get; set; }
 
         public static DataPoolManager SManager;
         //public object TBLSubheader;
@@ -15,13 +20,7 @@
 
     public class DriverTableData
     {
-        [FieldIndexAttr(0)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "DriverBaseTableData")]
-        public DriverBaseTableData[] DriverBaseTableDatas { get; set; }
-
-        [FieldIndexAttr(1)]
-        [BinStreamAttr(UseSubHeader = true, SubHeaderName = "DriverArtsTableData")]
-        public DriverArtsTableData[] DriverArtsTableDatas { get; set; }
+        
     }
 
     public class SlotOpenRate
