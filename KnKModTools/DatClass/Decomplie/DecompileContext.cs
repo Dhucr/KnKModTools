@@ -1,4 +1,6 @@
-﻿namespace KnKModTools.DatClass.Decomplie
+﻿using KnKModTools.Helper;
+
+namespace KnKModTools.DatClass.Decomplie
 {
     #region 上下文与结构定义
 
@@ -19,6 +21,52 @@
         public List<BasicBlock> Blocks = [];
         public Dictionary<BasicBlock, Stack<ExpressionNode>> BlockStacks = [];
         public BlockNode CurrentNode;
+
+        public LoopContext Loop = new();
+        public class LoopContext
+        {
+            public bool IsInLoop = false;
+            public uint WhileAddr;
+            public uint BreakAddr;
+            public uint EndAddr;
+
+            public void EnterLoop(uint whileAddr, uint breakAddr, uint endAddr)
+            {
+                IsInLoop = true;
+                WhileAddr = whileAddr;
+                BreakAddr = breakAddr;
+                EndAddr = endAddr;
+            }
+
+            public void ExitLoop()
+            {
+                IsInLoop = false;
+            }
+        }
+
+        public IDisposable CaptureLoopState()
+        {
+            return new LoopStateCapturer(this);
+        }
+
+        private class LoopStateCapturer : IDisposable
+        {
+            private readonly DecompileContext _ctx;
+            private readonly LoopContext _loop;
+
+            public LoopStateCapturer(DecompileContext ctx)
+            {
+                _ctx = ctx;
+                _loop = new LoopContext();
+                _loop.EnterLoop(_ctx.Loop.WhileAddr, 
+                    _ctx.Loop.BreakAddr, _ctx.Loop.EndAddr);
+            }
+
+            public void Dispose()
+            {
+                _ctx.Loop = _loop;
+            }
+        }
 
         public IDisposable CaptureStackState()
         {

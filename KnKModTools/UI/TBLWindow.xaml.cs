@@ -276,9 +276,9 @@ namespace KnKModTools.UI
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                DatScript dat1 = new DatScript();
+                /*DatScript dat1 = new DatScript();
                 dat1.Load(dialog.FileName);
-                Debug.Log2(Path.GetFileNameWithoutExtension(dialog.FileName) + ".txt", DatScript.GenerateClassString(dat1));
+                Debug.Log2(Path.GetFileNameWithoutExtension(dialog.FileName) + ".txt", DatScript.GenerateClassString(dat1));*/
 
                 var dat = new DatScript();
                 dat.Load(dialog.FileName);

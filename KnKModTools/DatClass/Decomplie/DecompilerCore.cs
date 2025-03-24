@@ -76,7 +76,6 @@ namespace KnKModTools.DatClass.Decomplie
                 LabelMap = [],
                 PendingClosures = new()
             };
-
             IEnumerable<string> array = Enumerable.Range(0, function.InArgs.Length).Select(i => $"arg{i}");
             foreach (var item in array)
             {
@@ -400,9 +399,21 @@ namespace KnKModTools.DatClass.Decomplie
             return last == null ? 0 : (uint)last.Operands[0];
         }
 
+        public uint GetAddress(List<BasicBlock> blocks)
+        {
+            InStruction? last = GetLastIns(blocks);
+            return last == null ? 0 : (uint)last.Operands[0];
+        }
+
         public uint GetOffset(BasicBlock block)
         {
             InStruction? last = block?.Instructions?.LastOrDefault();
+            return last == null ? 0 : last.Offset;
+        }
+
+        public uint GetOffset(List<BasicBlock> blocks)
+        {
+            InStruction? last = GetLastIns(blocks);
             return last == null ? 0 : last.Offset;
         }
 

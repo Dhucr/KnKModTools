@@ -1,5 +1,6 @@
 ﻿using KnKModTools.Helper;
 using KnKModTools.UI;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace KnKModTools.DatClass.Decomplie
 {
@@ -35,6 +36,10 @@ namespace KnKModTools.DatClass.Decomplie
             AstNode ifNode = null;
             switch (instr.Code)
             {
+                case 11: // JUMP
+                    ifNode = BuildJumpNode(ctx, core, instr);
+                    break;
+
                 case 14: // JUMPIFTRUE
                     ifNode = BuildIFTrueBlock(ctx, core, block);
                     break;
@@ -44,6 +49,31 @@ namespace KnKModTools.DatClass.Decomplie
                     break;
             }
             return ifNode;
+        }
+
+        private static AstNode BuildJumpNode(DecompileContext ctx, DecompilerCore core, InStruction instr)
+        {
+            if (!ctx.Loop.IsInLoop) return null;
+
+            var targetAddr = (uint)instr.Operands[0];
+            if (targetAddr >= ctx.Loop.BreakAddr)
+            {
+                return new ExpressionNode()
+                {
+                    Expression = "break"
+                };
+            }
+            else if (instr.Offset < ctx.Loop.EndAddr && targetAddr == ctx.Loop.WhileAddr)
+            {
+                return new ExpressionNode()
+                {
+                    Expression = "continue"
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static AstNode BuildIFTrueBlock(DecompileContext ctx, DecompilerCore core, BasicBlock block)
@@ -122,9 +152,15 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 var node = new WhileNode
                 {
-                    Condition = core.GetCondition(ctx, false),
-                    Body = StackMaintenance(ctx, core, block.TrueSuccessors)
+                    Condition = core.GetCondition(ctx, false)
                 };
+                using (ctx.CaptureLoopState())
+                {
+                    ctx.Loop.EnterLoop(core.GetAddress(block.TrueSuccessors),
+                    core.GetAddress(block), core.GetOffset(block.TrueSuccessors));
+                    node.Body = StackMaintenance(ctx, core, block.TrueSuccessors);
+                    ctx.Loop.ExitLoop();
+                }
 
                 return node;
             }
