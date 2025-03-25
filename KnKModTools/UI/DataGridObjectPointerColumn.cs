@@ -127,6 +127,7 @@ namespace KnKModTools.UI
                 if (_originalValue != tb.Text && _pointer != null)
                 {
                     _pointer.Update(tb.Text);
+                    _tbl.SyncPointers();
                 }
 
                 tb.Text = _originalLong;

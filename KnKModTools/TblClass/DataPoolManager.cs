@@ -32,6 +32,7 @@ namespace KnKModTools.TblClass
 
         private readonly LinkedList<DataPoolItem> _dataChain = new();
         private readonly Dictionary<OffsetKey, LinkedListNode<DataPoolItem>> _offsetMapping = [];
+        private readonly Dictionary<LinkedListNode<DataPoolItem>, OffsetKey> _linkedListMapping = [];
         private static Dictionary<Type, Func<DataPoolManager, LinkedListNode<DataPoolItem>, IDataPointer>> _factoryCache = [];
         private readonly OffsetCalculator _calculator;
         private readonly ReaderWriterLockSlim _lock = new();
@@ -452,6 +453,12 @@ namespace KnKModTools.TblClass
             {
                 var offset = GetOffset(current);
                 var key = new OffsetKey(offset, current.Value.Property);
+
+                if(_linkedListMapping.TryGetValue(current, out var oldKey))
+                {
+                    _offsetMapping.Remove(oldKey);
+                }
+                _linkedListMapping[current] = key;
                 _offsetMapping[key] = current;
                 current.Value.Property.SetValue(current.Value.Owner, offset);
                 current = current.Next;

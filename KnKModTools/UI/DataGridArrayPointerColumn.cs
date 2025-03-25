@@ -79,6 +79,7 @@ namespace KnKModTools.UI
                 if (!Utilities.AreArraysEqual(UIData.ArrayPanelArray, _pointer.IValue as Array))
                 {
                     _pointer.Update(UIData.ArrayPanelArray);
+                    _tbl.SyncPointers();
                     bindingExpression.UpdateTarget();
                 }
 

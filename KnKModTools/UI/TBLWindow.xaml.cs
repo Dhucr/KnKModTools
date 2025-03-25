@@ -276,6 +276,8 @@ namespace KnKModTools.UI
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
+                ShowMessage("反编译发现bug，暂时不可用。");
+                return;
                 /*DatScript dat1 = new DatScript();
                 dat1.Load(dialog.FileName);
                 Debug.Log2(Path.GetFileNameWithoutExtension(dialog.FileName) + ".txt", DatScript.GenerateClassString(dat1));*/

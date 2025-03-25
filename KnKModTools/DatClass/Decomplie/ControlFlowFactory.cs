@@ -277,7 +277,8 @@ namespace KnKModTools.DatClass.Decomplie
             DecompilerCore core, BasicBlock header,
             BasicBlock trueBlock, BasicBlock falseBlock)
         {
-            (SwitchNode switchNode, BasicBlock block) = BuildSwitchNode(ctx, core, header, trueBlock, falseBlock, BlockType.IFFlase);
+            (SwitchNode switchNode, BasicBlock block) = BuildSwitchNode(
+                ctx, core, header, trueBlock, falseBlock, BlockType.IFFlase, true);
 
             if (block.FalseSuccessors.Count > 0)
             {
@@ -290,7 +291,7 @@ namespace KnKModTools.DatClass.Decomplie
         private static (SwitchNode, BasicBlock) BuildSwitchNode(DecompileContext ctx,
             DecompilerCore core, BasicBlock header,
             BasicBlock trueBlock, BasicBlock falseBlock,
-            BlockType type)
+            BlockType type, bool isCheck = false)
         {
             var cond = core.GetCondition(ctx, true).Expression.Split(" == ");
             var switchNode = new SwitchNode
@@ -300,7 +301,8 @@ namespace KnKModTools.DatClass.Decomplie
 
             AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
 
-            BasicBlock block = BuildCaseNode(ctx, core, falseBlock, switchNode, type, cond[0]);
+            BasicBlock block = BuildCaseNode(ctx, core, falseBlock, switchNode, 
+                type, cond[0], isCheck);
 
             switchNode.DefaultCase = new BlockNode();
 
@@ -309,7 +311,8 @@ namespace KnKModTools.DatClass.Decomplie
 
         private static BasicBlock BuildCaseNode(DecompileContext ctx,
             DecompilerCore core, BasicBlock ifFalseBlock,
-            SwitchNode switchNode, BlockType type, string test)
+            SwitchNode switchNode, BlockType type, string test,
+            bool isCheck = false)
         {
             while (true)
             {
@@ -322,6 +325,13 @@ namespace KnKModTools.DatClass.Decomplie
 
                 BasicBlock update = core.GetFalseBlock(ctx, ifFalseBlock);
                 if (update == null || update.Type != type) break;
+
+                if (isCheck)
+                {
+                    match = core.GetCaseMatchValue(ctx, update, test);
+                    update.Visited = false;
+                    if (match.Equals("NotCase")) break;
+                }
 
                 ifFalseBlock = update;
             }

@@ -41,6 +41,11 @@ namespace KnKModTools.TblClass
             return value == null ? defaultValue : value;
         }
 
+        public void SyncPointers()
+        {
+            Manager.RefreshOffsetDic(Pointers);
+        }
+
         public override string ToString()
         {
             return Name;

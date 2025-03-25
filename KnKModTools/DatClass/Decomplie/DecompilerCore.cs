@@ -76,6 +76,10 @@ namespace KnKModTools.DatClass.Decomplie
                 LabelMap = [],
                 PendingClosures = new()
             };
+            /*if(function.Name == "AniBtlAria")
+            {
+                context.EvalStack.Clear();
+            }*/
             IEnumerable<string> array = Enumerable.Range(0, function.InArgs.Length).Select(i => $"arg{i}");
             foreach (var item in array)
             {
