@@ -30,9 +30,10 @@ namespace KnKModTools.DatClass.Decomplie
             public uint BreakAddr;
             public uint EndAddr;
 
-            public void EnterLoop(uint whileAddr, uint breakAddr, uint endAddr)
+            public void EnterLoop(uint whileAddr, uint breakAddr, 
+                uint endAddr, bool isInLoop = true)
             {
-                IsInLoop = true;
+                IsInLoop = isInLoop;
                 WhileAddr = whileAddr;
                 BreakAddr = breakAddr;
                 EndAddr = endAddr;
@@ -59,7 +60,8 @@ namespace KnKModTools.DatClass.Decomplie
                 _ctx = ctx;
                 _loop = new LoopContext();
                 _loop.EnterLoop(_ctx.Loop.WhileAddr, 
-                    _ctx.Loop.BreakAddr, _ctx.Loop.EndAddr);
+                    _ctx.Loop.BreakAddr, _ctx.Loop.EndAddr, 
+                    _ctx.Loop.IsInLoop);
             }
 
             public void Dispose()

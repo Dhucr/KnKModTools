@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Windows.Documents;
 
 namespace KnKModTools.DatClass.Decomplie
 {
@@ -76,10 +79,10 @@ namespace KnKModTools.DatClass.Decomplie
                 LabelMap = [],
                 PendingClosures = new()
             };
-            /*if(function.Name == "AniBtlAria")
+            if(function.Name == "FDChallengeSelect")
             {
                 context.EvalStack.Clear();
-            }*/
+            }
             IEnumerable<string> array = Enumerable.Range(0, function.InArgs.Length).Select(i => $"arg{i}");
             foreach (var item in array)
             {
@@ -136,7 +139,47 @@ namespace KnKModTools.DatClass.Decomplie
             }
             return rootBlock;
         }
+        private void BuildBaseBlocks(DecompileContext ctx,
+    InStruction[] instructions, HashSet<uint> jumpTargets)
+        {
+            var currentBlock = new BasicBlock();
+            ctx.Blocks.Add(currentBlock);
+            foreach (InStruction instr in instructions)
+            {
+                // 检测是否需要分割块
+                bool shouldSplit = false;
 
+                // 情况1：当前指令是跳转目标
+                if (jumpTargets.Contains(instr.Offset))
+                {
+                    shouldSplit = true;
+                }
+
+                // 情况2：前一条指令是跳转指令
+                if (currentBlock.Instructions.Count > 0 &&
+                    IsBranching(currentBlock.Instructions.Last().Code))
+                {
+                    shouldSplit = true;
+                }
+
+                
+                if (shouldSplit && currentBlock.Instructions.Count > 0)
+                {
+                    currentBlock = new BasicBlock();
+                    ctx.Blocks.Add(currentBlock);
+                }
+                // 标记块起始地址（第一条指令）
+                if (!currentBlock.Instructions.Any())
+                {
+                    currentBlock.StartAddr = instr.Offset;
+                }
+                currentBlock.EndAddr = instr.Offset;
+                currentBlock.Instructions.Add(instr);
+                ctx.AddrToBlock[instr.Offset] = currentBlock;
+            }
+        }
+
+        /*
         private void BuildBaseBlocks(DecompileContext ctx,
             InStruction[] instructions, HashSet<uint> jumpTargets)
         {
@@ -167,7 +210,7 @@ namespace KnKModTools.DatClass.Decomplie
                 currentBlock.Instructions.Add(instr);
                 ctx.AddrToBlock[instr.Offset] = currentBlock;
             }
-        }
+        }*/
 
         private void BuildJumpRelationship(DecompileContext ctx)
         {
@@ -186,20 +229,24 @@ namespace KnKModTools.DatClass.Decomplie
 
                     case 14: // JUMPIFTRUE（条件为真时跳转）
                         block.Type = BlockType.IFTrue;
-                        var trueTarget = (uint)lastInstr.Operands[0];
+                        /*var trueTarget = (uint)lastInstr.Operands[0];
                         block.FalseSuccessors.AddRange(
                             AddIFTrueElseBlocks(ctx, block, trueTarget)); // False分支（可能为null）
                         block.TrueSuccessors.AddRange(
                             AddIFTrueThenBlocks(ctx, block, block.FalseSuccessors, trueTarget));  // True分支
+                        RemoveLastBlock(ctx, block);*/
+                        IFTTest(ctx, block);
                         break;
 
                     case 15: // JUMPIFFALSE（条件为假时跳转）
                         block.Type = BlockType.IFFlase;
-                        var falseTarget = (uint)lastInstr.Operands[0];
+                        /*var falseTarget = (uint)lastInstr.Operands[0];
                         block.TrueSuccessors.AddRange(
                             AddIFFalseElseBlocks(ctx, block, falseTarget));  // False分支
                         block.FalseSuccessors.AddRange(
                             AddIFFalseThenBlocks(ctx, block.TrueSuccessors, falseTarget)); // True分支（可能为null）
+                        RemoveLastBlock(ctx, block);*/
+                        IFFTest(ctx, block);
                         break;
 
                     case 13:
@@ -211,6 +258,124 @@ namespace KnKModTools.DatClass.Decomplie
                         break;
                 }
             }
+        }
+        
+        private void RemoveLastBlock(DecompileContext ctx, BasicBlock block)
+        {
+            var last = ctx.Blocks.LastOrDefault();
+            if(block.TrueSuccessors != null && block.TrueSuccessors.Count > 0)
+            {
+                block.TrueSuccessors.Remove(last);
+            }
+            if(block.FalseSuccessors != null && block.FalseSuccessors.Count > 0)
+            {
+                block.FalseSuccessors.Remove(last);
+            }
+        }
+
+        private void IFFTest(DecompileContext ctx, BasicBlock block)
+        {
+            var trueSuccessors = new List<BasicBlock>();
+            var falseSuccessors = new List<BasicBlock>();
+            var endAddr = GetAddress(block);
+            var trueBlock = block;
+            var falseBlock = GetBlock(ctx, endAddr);
+            while (true)
+            {
+                var nextBlock = GetNextBlock(ctx, trueBlock);
+                if (nextBlock is null) break;
+                if (nextBlock.StartAddr == endAddr) break;
+                if (nextBlock.Equals(falseBlock)) break;
+
+                trueSuccessors.Add(nextBlock);
+                trueBlock = nextBlock;
+            }
+
+            if (trueSuccessors.Count == 0) return;
+            block.TrueSuccessors.AddRange(trueSuccessors);
+
+            var last = trueBlock.Instructions.LastOrDefault();
+            if (last is null) return;
+            if (!IsBranching(last.Code)) return;
+
+            endAddr = (uint)last.Operands[0];
+            if (endAddr < last.Offset) return;
+            if (endAddr == falseBlock.StartAddr) return;
+
+            var blockRange = 0u;
+            while (true)
+            {
+                var isJumpBlock = GetCode(falseBlock) == 15;
+                if(isJumpBlock || !isJumpBlock && 
+                    falseBlock.StartAddr >= blockRange)
+                {
+                    falseSuccessors.Add(falseBlock);
+                }
+                
+                var nextBlock = GetNextBlock(ctx, falseBlock);
+                if (isJumpBlock)
+                {
+                    nextBlock = GetBlock(ctx, GetAddress(falseBlock));
+                    var temp = GetPriviousBlock(ctx, nextBlock);
+                    if(temp is not null && GetCode(temp) == 11)
+                    {
+                        blockRange = GetAddress(temp);
+                    }
+                }
+                
+                if (nextBlock is null) break;
+                if (nextBlock.StartAddr == endAddr) break;
+
+                falseBlock = nextBlock;
+            }
+
+            if(falseSuccessors.Count == 0) return;
+            block.FalseSuccessors.AddRange(falseSuccessors);
+        }
+
+        private void IFTTest(DecompileContext ctx, BasicBlock block)
+        {
+            var trueSuccessors = new List<BasicBlock>();
+            var falseSuccessors = new List<BasicBlock>();
+            var endAddr = GetAddress(block);
+            var falseBlock = block;
+            var trueBlock = GetBlock(ctx, endAddr);
+            while (true)
+            {
+                var nextBlock = GetNextBlock(ctx, falseBlock);
+                if (nextBlock is null) break;
+                if (nextBlock.StartAddr == endAddr) break;
+                if (nextBlock.Equals(trueBlock)) break;
+
+                falseSuccessors.Add(nextBlock);
+                falseBlock = nextBlock;
+                if (GetCode(nextBlock) == 11) break;
+            }
+
+            if (falseSuccessors.Count == 0) return;
+            block.FalseSuccessors.AddRange(falseSuccessors);
+
+            var last = falseSuccessors.FirstOrDefault()?.
+                Instructions.LastOrDefault();
+            if (last is null) return;
+            if (!IsBranching(last.Code)) return;
+
+            endAddr = (uint)last.Operands[0];
+            if (endAddr < last.Offset) return;
+            if (endAddr == trueBlock.StartAddr) return;
+
+            while (true)
+            {
+                trueSuccessors.Add(trueBlock);
+                var nextBlock = GetNextBlock(ctx, trueBlock);
+                if (nextBlock is null) break;
+                if (nextBlock.StartAddr == endAddr) break;
+
+                trueBlock = nextBlock;
+            }
+
+            if(trueSuccessors.Count == 0) return;
+            block.TrueSuccessors.AddRange(trueSuccessors);
         }
 
         private List<BasicBlock> AddIFTrueElseBlocks(DecompileContext ctx,
@@ -230,7 +395,7 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock block, uint endAddr, Predicate<BasicBlock> predicate)
         {
             var successors = new List<BasicBlock>();
-            BasicBlock next = GetNextBlock(ctx, block);
+            var next = GetNextBlock(ctx, block);
 
             var addr = next.StartAddr;
             while (addr < endAddr)
@@ -260,7 +425,7 @@ namespace KnKModTools.DatClass.Decomplie
                 endAddr = (uint)ins.Operands[0];
             }
 
-            return CreateThenSuccessors(ctx, nextBlocks, targetAddr, endAddr);
+            return CreateThenSuccessors(ctx, nextBlocks, targetAddr, endAddr, true);
         }
 
         private List<BasicBlock> AddIFTrueThenBlocks(DecompileContext ctx, BasicBlock block,
@@ -269,11 +434,11 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock next = GetNextBlock(ctx, block);
             var endAddr = GetAddress(next);
 
-            return CreateThenSuccessors(ctx, nextBlocks, targetAddr, endAddr);
+            return CreateThenSuccessors(ctx, nextBlocks, targetAddr, endAddr, false);
         }
 
         private List<BasicBlock> CreateThenSuccessors(DecompileContext ctx,
-            List<BasicBlock> nextBlocks, uint targetAddr, uint endAddr)
+            List<BasicBlock> nextBlocks, uint targetAddr, uint endAddr, bool isFalse)
         {
             var successors = new List<BasicBlock>();
             InStruction last = GetLastIns(nextBlocks);
@@ -281,8 +446,14 @@ namespace KnKModTools.DatClass.Decomplie
                 return successors;
 
             BasicBlock start = GetBlock(ctx, targetAddr);
-
-            while (targetAddr < endAddr)
+            //false <
+            //true <=
+            var check = targetAddr <= endAddr;
+            /*if (isFalse)
+            {
+                check = targetAddr < endAddr;
+            }*/
+            while (targetAddr <= endAddr)
             {
                 successors.Add(start);
                 start = GetNextBlock(ctx, start);
@@ -475,28 +646,55 @@ namespace KnKModTools.DatClass.Decomplie
             return null;
         }
 
-        public InStruction GetNextIns(DecompileContext ctx, uint addr)
+        public InStruction? GetNextIns(DecompileContext ctx, uint addr)
         {
             foreach (BasicBlock block in ctx.Blocks)
             {
                 for (var i = 0; i < block.Instructions.Count; i++)
                 {
-                    if (block.Instructions[i].Offset == addr)
+                    if (block.Instructions[i].Offset != addr)
                     {
-                        return block.Instructions[i + 1];
+                        continue;
                     }
+
+                    if (i == block.Instructions.Count - 1)
+                    {
+                        var b = GetNextBlock(ctx, block);
+                        return b?.Instructions.Count > 0 ? b.Instructions[0] : null;
+                    }
+                    return block.Instructions[i + 1];
                 }
             }
 
             return null;
         }
 
-        public BasicBlock GetNextBlock(DecompileContext ctx, BasicBlock current)
+        public BasicBlock? GetNextBlock(DecompileContext ctx, BasicBlock current)
         {
             var index = ctx.Blocks.IndexOf(current);
             return index >= 0 && index < ctx.Blocks.Count - 1
                    ? ctx.Blocks[index + 1]
                    : null;
+        }
+
+        public BasicBlock? GetPriviousBlock(DecompileContext ctx, BasicBlock current)
+        {
+            var index = ctx.Blocks.IndexOf(current);
+            return index > 0 ? ctx.Blocks[index - 1] : null;
+        }
+
+        public BasicBlock? GetPriviousJumpBlock(DecompileContext ctx, BasicBlock current)
+        {
+            while (true)
+            {
+                var block = GetPriviousBlock(ctx, current);
+                if (block != null) break;
+                if (block?.Type == BlockType.Jump)
+                {
+                    return block;
+                }
+            }
+            return null;
         }
 
         public void BuildBaseInstruction(DecompileContext ctx,
@@ -537,7 +735,7 @@ namespace KnKModTools.DatClass.Decomplie
         {
             var match = "NotCase";
 
-            if (block == null || block.Visited ||
+            if (block == null || block.Visited || block.Instructions.Count == 1 ||
                 block.Instructions[^2].Code != 21) return match;
 
             using (ctx.CaptureStackState())

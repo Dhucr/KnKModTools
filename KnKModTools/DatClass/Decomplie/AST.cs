@@ -53,15 +53,28 @@ namespace KnKModTools.DatClass.Decomplie
         {
             sb.Append(' ', indent * 4).Append("if (");
             Condition.GenerateCode(sb, 0);
+            if (ThenBlock == null && ElseBlock == null ||
+                ThenBlock?.Statements.Count == 0 &&
+                ElseBlock?.Statements.Count == 0)
+            {
+                sb.AppendLine(") { }");
+                return;
+            }
+
             sb.AppendLine(") {");
-            ThenBlock.GenerateCode(sb, indent + 1);
-            sb.AppendLine();
+            if (ThenBlock?.Statements.Count > 0)
+            {
+                ThenBlock.GenerateCode(sb, indent + 1);
+                sb.AppendLine();
+            }
+
             if (ElseBlock?.Statements.Count > 0)
             {
                 sb.Append(' ', indent * 4).AppendLine("} else {");
                 ElseBlock.GenerateCode(sb, indent + 1);
                 sb.AppendLine();
             }
+
             sb.Append(' ', indent * 4).Append("}");
         }
     }
@@ -103,7 +116,7 @@ namespace KnKModTools.DatClass.Decomplie
         public string MatchValue { get; set; }
         public BlockNode Body { get; set; }
 
-        private static readonly string pattern = @"(?m)(^.*\breturn\b.*$)\s*$";
+        private static readonly string pattern = @"(?m)^.*\b(return|break|continue)\b(?=.*\r?\n[^\r\n]*$)";
 
         public override void GenerateCode(StringBuilder sb, int indent)
         {
@@ -123,7 +136,7 @@ namespace KnKModTools.DatClass.Decomplie
         {
             if (!Regex.IsMatch(sb.ToString(), pattern))
             {
-                sb.Append(' ', indent * 4).AppendLine("break;");
+                sb.Append(' ', indent * 4).AppendLine("break");
             }
         }
     }

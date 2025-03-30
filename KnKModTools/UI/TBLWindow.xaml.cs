@@ -276,22 +276,20 @@ namespace KnKModTools.UI
 
             if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                ShowMessage("反编译发现bug，暂时不可用。");
-                return;
                 /*DatScript dat1 = new DatScript();
                 dat1.Load(dialog.FileName);
                 Debug.Log2(Path.GetFileNameWithoutExtension(dialog.FileName) + ".txt", DatScript.GenerateClassString(dat1));*/
 
-                var dat = new DatScript();
+                /*var dat = new DatScript();
                 dat.Load(dialog.FileName);
                 var core = new DecompilerCore(dat);
                 using var sw = new StreamWriter(
                     Path.Combine(GlobalSetting.Setting.OutputDir,
                     Path.GetFileNameWithoutExtension(dialog.FileName) + ".js"));
                 sw.Write(core.DecompileDatScript());
-                sw.Flush();
+                sw.Flush();*/
 
-                /*var syncLock = new object();
+                var syncLock = new object();
                 var exceptions = new ConcurrentQueue<Exception>();
                 ShowMessage(Utilities.GetDisplayName("Decompiling"));
                 Task.Run(() =>
@@ -324,7 +322,7 @@ namespace KnKModTools.UI
                     }
 
                     ShowMessage(Utilities.GetDisplayName("Decompiled"), InfoType.Success);
-                });*/
+                });
             }
         }
 

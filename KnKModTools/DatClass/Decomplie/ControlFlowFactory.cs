@@ -1,5 +1,7 @@
 ﻿using KnKModTools.Helper;
 using KnKModTools.UI;
+using System.Windows.Documents;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace KnKModTools.DatClass.Decomplie
@@ -81,11 +83,11 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock trueBlock = core.GetTrueBlock(ctx, block);
             BasicBlock falseBlock = core.GetFalseBlock(ctx, block);
 
-            if (IsSwitchStructure(block, trueBlock, falseBlock, true))
+            if (IsSwitchStructure(ctx, core, block, trueBlock, falseBlock, true))
             {
-                return BuildTSwitchNode(ctx, core, block, trueBlock, falseBlock);
+                return BuildTSwitchNode(ctx, core, block);
             }
-            else if (IsTIfElseStructure(trueBlock, falseBlock))
+            else if (IsTIfElseStructure(ctx, core, trueBlock, falseBlock))
             {
                 List<BasicBlock> then = block.FalseSuccessors;
                 if (block.FalseSuccessors.Count == 1 && falseBlock.Instructions.Count == 1)
@@ -114,7 +116,11 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else if (IsEmptyBlock(trueBlock, falseBlock))
             {
-                return null;
+                var node = new IfStatementNode
+                {
+                    Condition = core.GetCondition(ctx, false),
+                };
+                return node;
             }
             else
             {
@@ -129,9 +135,9 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock trueBlock = core.GetTrueBlock(ctx, block);
             BasicBlock falseBlock = core.GetFalseBlock(ctx, block);
 
-            if (IsSwitchStructure(block, trueBlock, falseBlock, false))
+            if (IsSwitchStructure(ctx, core, block, trueBlock, falseBlock, false))
             {
-                return BuildFSwitchNode(ctx, core, block, trueBlock, falseBlock);
+                return BuildFSwitchNode(ctx, core, block);
             }
             else if (IsFChainStructure(ctx, core, trueBlock, falseBlock))
             {
@@ -148,7 +154,7 @@ namespace KnKModTools.DatClass.Decomplie
 
                 return node;
             }
-            else if (IsWhileStructure(block, trueBlock))
+            else if (IsWhileStructure(ctx, core, block, trueBlock))
             {
                 var node = new WhileNode
                 {
@@ -164,7 +170,7 @@ namespace KnKModTools.DatClass.Decomplie
 
                 return node;
             }
-            else if (IsFSingleIfStructure(core, block, trueBlock))
+            else if (IsFSingleIfStructure(ctx, core, block, trueBlock))
             {
                 var node = new IfStatementNode
                 {
@@ -176,7 +182,11 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else if(IsEmptyBlock(trueBlock, falseBlock))
             {
-                return null;
+                var node = new IfStatementNode
+                {
+                    Condition = core.GetCondition(ctx, false),
+                };
+                return node;
             }
             else
             {
@@ -193,39 +203,6 @@ namespace KnKModTools.DatClass.Decomplie
             using (ctx.CaptureStackState())
             {
                 node = BuildBranchNode(ctx, core, children);
-            }
-
-            return node;
-        }
-
-        private static BlockNode StackMaintenance(DecompileContext ctx,
-            DecompilerCore core, BasicBlock start, uint endAddr)
-        {
-            var node = new BlockNode();
-
-            using (ctx.CaptureStackState())
-            {
-                var pos = start.EndAddr;
-                while (pos < endAddr)
-                {
-                    BlockNode b = CreateControlFlow(ctx, core, start);
-                    if (b == null)
-                    {
-                        start = core.GetNextBlock(ctx, start);
-                        if (start == null) break;
-                        break;
-                    }
-
-                    foreach (AstNode stam in b.Statements)
-                    {
-                        node.Statements.Add(stam);
-                    }
-
-                    start = core.GetNextBlock(ctx, start);
-
-                    if (start == null) break;
-                    pos = start.EndAddr;
-                }
             }
 
             return node;
@@ -249,40 +226,64 @@ namespace KnKModTools.DatClass.Decomplie
         }
 
         private static SwitchNode BuildTSwitchNode(DecompileContext ctx,
-            DecompilerCore core, BasicBlock header,
-            BasicBlock trueBlock, BasicBlock falseBlock)
+            DecompilerCore core, BasicBlock header)
         {
-            (SwitchNode switchNode, BasicBlock block) = BuildSwitchNode(ctx, core, header, trueBlock, falseBlock, BlockType.IFTrue);
-
-            var targetAddr = core.GetCode(trueBlock) == 13 ?
-                (uint)core.GetLastIns(block.FalseSuccessors).Operands[0] :
-                core.GetAddress(trueBlock);
-            if (core.GetAddress(block) <= targetAddr)
+            var cond = core.GetCondition(ctx, true).Expression.Split(" == ");
+            var switchNode = new SwitchNode
             {
-                BasicBlock? last = block.FalseSuccessors.LastOrDefault();
-                if (block.FalseSuccessors.Count == 1 && last?.Instructions.Count == 1)
-                {
-                    last.Visited = true;
-                    last = last.TrueSuccessors[0];
-                }
-                if (core.GetCode(last) == 13) targetAddr = core.GetInsLength(last);
-                switchNode.DefaultCase = StackMaintenance(
-                    ctx, core, last, targetAddr);
-            }
+                TestExpression = new ExpressionNode() { Expression = cond[0] }
+            };
 
+            AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
+
+            foreach (var block in header.FalseSuccessors)
+            {
+                var match = core.GetCaseMatchValue(ctx, block, cond[0]);
+                if (match.Equals("NotCase")) break;
+                
+                AddCaseNode(ctx, core, block.TrueSuccessors, switchNode, match);
+            }
+            switchNode.DefaultCase = new BlockNode();
+
+            var lastIns = core.GetLastIns(header.TrueSuccessors);
+            if (lastIns.Code == 13)
+                return switchNode;
+
+            var endAddr = (uint)lastIns.Operands[0];
+            var lastJump = header.FalseSuccessors.LastOrDefault();
+            var jumpAddr = core.GetAddress(lastJump);
+            
+            if (jumpAddr == endAddr)
+                return switchNode;
+
+            switchNode.DefaultCase = StackMaintenance(ctx, core, lastJump.TrueSuccessors);
             return switchNode;
         }
 
         private static SwitchNode BuildFSwitchNode(DecompileContext ctx,
-            DecompilerCore core, BasicBlock header,
-            BasicBlock trueBlock, BasicBlock falseBlock)
+            DecompilerCore core, BasicBlock header)
         {
-            (SwitchNode switchNode, BasicBlock block) = BuildSwitchNode(
-                ctx, core, header, trueBlock, falseBlock, BlockType.IFFlase, true);
-
-            if (block.FalseSuccessors.Count > 0)
+            var cond = core.GetCondition(ctx, true).Expression.Split(" == ");
+            var switchNode = new SwitchNode
             {
-                switchNode.DefaultCase = StackMaintenance(ctx, core, block.FalseSuccessors);
+                TestExpression = new ExpressionNode() { Expression = cond[0] }
+            };
+
+            AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
+
+            foreach (var block in header.FalseSuccessors)
+            {
+                var match = core.GetCaseMatchValue(ctx, block, cond[0]);
+                if (match.Equals("NotCase")) break;
+
+                AddCaseNode(ctx, core, block.TrueSuccessors, switchNode, match);
+            }
+            switchNode.DefaultCase = new BlockNode();
+
+            var lastBlock = header.FalseSuccessors.LastOrDefault();
+            if (lastBlock?.FalseSuccessors.Count > 0)
+            {
+                switchNode.DefaultCase = StackMaintenance(ctx, core, lastBlock.FalseSuccessors);
             }
 
             return switchNode;
@@ -412,7 +413,8 @@ namespace KnKModTools.DatClass.Decomplie
             return trueBlock == null && falseBlock == null;
         }
 
-        private static bool IsWhileStructure(BasicBlock header, BasicBlock trueBlock)
+        private static bool IsWhileStructure(DecompileContext ctx, 
+            DecompilerCore core, BasicBlock header, BasicBlock trueBlock)
         {
             if (trueBlock == null) return false;
 
@@ -422,15 +424,29 @@ namespace KnKModTools.DatClass.Decomplie
 
             var trueJumpAddr = (uint)trueBlock.Instructions.Last().Operands[0];
 
+            if (ctx.Loop.IsInLoop && trueJumpAddr <= ctx.Loop.WhileAddr)
+            {
+                return false;
+            }
+
             return trueJumpAddr < (uint)laseHeaderBlock.Operands[0];
         }
 
-        private static bool IsFSingleIfStructure(DecompilerCore core, BasicBlock block, BasicBlock trueBlock)
+        private static bool IsFSingleIfStructure(
+            DecompileContext ctx, DecompilerCore core,
+            BasicBlock block, BasicBlock trueBlock)
         {
             if (trueBlock == null) return false;
 
+            if (ctx.Loop.IsInLoop && trueBlock.Type == BlockType.Jump &&
+                core.GetAddress(trueBlock) <= ctx.Loop.WhileAddr)
+            {
+                return true;
+            }
+
             // 特征1：真分支没有终止跳转
-            return (trueBlock.Type != BlockType.Jump) || (core.GetAddress(block) == core.GetAddress(trueBlock));
+            return (trueBlock.Type != BlockType.Jump) || 
+                (core.GetAddress(block) == core.GetAddress(trueBlock));
         }
 
         private static bool IsTSingleIfStructure(DecompilerCore core, 
@@ -466,7 +482,8 @@ namespace KnKModTools.DatClass.Decomplie
             return true;
         }
 
-        private static bool IsTIfElseStructure(BasicBlock trueBlock, BasicBlock falseBlock)
+        private static bool IsTIfElseStructure(DecompileContext ctx,
+            DecompilerCore core, BasicBlock trueBlock, BasicBlock falseBlock)
         {
             if (trueBlock == null || falseBlock == null) return false;
 
@@ -484,21 +501,54 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 if (falseBlock?.TrueSuccessors.Count == 0) return false;
                 BasicBlock? jumpBlock = falseBlock?.TrueSuccessors?.LastOrDefault();
-                var hasJumpJump = jumpBlock?.Type == BlockType.Jump; // 存在JUMP指令
+                var hasJumpJump = 
+                    jumpBlock?.Type == BlockType.Jump; // 存在JUMP指令
+                var trueJump = core.GetAddress(trueBlock);
 
-                if (!hasJumpJump) return false;
+                if (hasJumpJump)
+                {
+                    var jump = core.GetAddress(jumpBlock);
+                    return trueJump == jump;
+                }
 
-                var trueJump = (uint)trueBlock.Instructions.LastOrDefault().Operands[0];
-                var jump = (uint)jumpBlock.Instructions.LastOrDefault().Operands[0];
+                if (jumpBlock?.Type == BlockType.Exit ||
+                    jumpBlock?.Type == BlockType.Base)
+                {
+                    var mergeBlock1 = core.GetNextBlock(ctx, trueBlock);
+                    var mergeBlock2 = core.GetNextBlock(ctx, jumpBlock);
+                    return mergeBlock1 is not null &&
+                        mergeBlock2 is not null &&
+                        mergeBlock1.Equals(mergeBlock2);
+                }
 
-                return trueJump == jump;
+                if (jumpBlock?.Type == BlockType.IFFlase ||
+                    jumpBlock?.Type == BlockType.IFTrue)
+                {
+                    while (true)
+                    {
+                        var jump = core.GetAddress(jumpBlock);
+                        if (jump == trueJump)
+                            return true;
+                        if (jump > trueJump)
+                            return false;
+                        jumpBlock = core.GetBlock(ctx, jump);
+                        if (jumpBlock == null)
+                            return false;
+                    }
+                    
+                }
+
+                return false;
             }
             return true;
         }
 
-        private static bool IsSwitchStructure(BasicBlock header, BasicBlock trueBlock, BasicBlock falseBlock, bool isTF)
+        private static bool IsSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header, 
+            BasicBlock trueBlock, BasicBlock falseBlock, bool isTF)
         {
-            if (trueBlock == null || falseBlock == null) return false;
+            if (falseBlock == null || trueBlock == null) return false;
+
+            if (ctx.Loop.IsInLoop && !isTF) return false;
 
             if (isTF && falseBlock.Type != BlockType.IFTrue) return false;
 
