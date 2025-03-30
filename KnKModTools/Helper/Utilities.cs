@@ -169,5 +169,21 @@ namespace KnKModTools.Helper
             // 若未找到足够次数的匹配，返回原字符串
             return source;
         }
+
+        public static T GetNextElement<T>(List<T> list, T currentElement)
+        {
+            if (list == null || currentElement == null)
+                throw new ArgumentNullException();
+
+            int index = list.IndexOf(currentElement);
+
+            if (index == -1)
+                throw new ArgumentException("Element not found in the list.");
+
+            if (index == list.Count - 1) // If it's the last element
+                return default(T); // or `null` for reference types
+
+            return list[index + 1];
+        }
     }
 }

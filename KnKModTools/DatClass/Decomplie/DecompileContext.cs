@@ -22,6 +22,8 @@ namespace KnKModTools.DatClass.Decomplie
         public Dictionary<BasicBlock, Stack<ExpressionNode>> BlockStacks = [];
         public BlockNode CurrentNode;
 
+        public bool IsIrreducibleCFG = false;
+
         public LoopContext Loop = new();
         public class LoopContext
         {

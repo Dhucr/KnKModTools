@@ -266,4 +266,6 @@
     <system:String x:Key="Decompiling">正在反编译...</system:String>
     <system:String x:Key="Decompiled">反编译完成！</system:String>
     <system:String x:Key="WarningCFG">遇到不可规约流图！</system:String>
+    <system:String x:Key="ICFGWarning">函数中包含不可规约流图</system:String>
+    <system:String x:Key="DecompileScript">反编译脚本</system:String>
 </ResourceDictionary>

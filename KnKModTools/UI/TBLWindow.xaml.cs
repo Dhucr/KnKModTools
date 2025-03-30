@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Window = System.Windows.Window;
 
 namespace KnKModTools.UI
@@ -37,7 +38,6 @@ namespace KnKModTools.UI
             FileList.ItemsSource = _tBLFileList;
 
             UIData.ShowMessage = ShowMessage;
-            GC.Collect();
         }
 
         private void FileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -307,6 +307,7 @@ namespace KnKModTools.UI
                             using var sw = new StreamWriter(
                                 Path.Combine(GlobalSetting.Setting.OutputDir,
                                 Path.GetFileNameWithoutExtension(file) + ".js"));
+                            LogHelper.Log($"{Utilities.GetDisplayName("DecompileScript")}:{file}");
                             sw.Write(core.DecompileDatScript());
                             sw.Flush();
                         }
@@ -334,6 +335,7 @@ namespace KnKModTools.UI
         private void Window_Closed(object sender, EventArgs e)
         {
             Growl.ClearGlobal();
+            LogHelper.Close();
             GC.Collect();
         }
     }

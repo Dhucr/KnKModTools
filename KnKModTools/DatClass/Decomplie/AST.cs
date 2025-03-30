@@ -125,10 +125,12 @@ namespace KnKModTools.DatClass.Decomplie
             sb.Append(MatchValue);
             sb.AppendLine(":");
 
+            if (Body is null)
+                return;
+
             // 生成case体
             Body.GenerateCode(sb, indent + 1);
             sb.AppendLine();
-
             TryAddBreak(sb, indent + 1);
         }
 

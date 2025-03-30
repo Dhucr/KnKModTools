@@ -24,6 +24,7 @@ namespace KnKModTools
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LogHelper.Run();
             CheckAndCreateDirectories();
 
             var bitmapImage = new BitmapImage();
@@ -139,8 +140,9 @@ namespace KnKModTools
         {
             Dispatcher.Invoke(() =>
             {
-                Title = $"{Utilities.GetDisplayName("Loadding")}{v} / 45";
-                if (v == 45)
+                var sum = TBLData.TBLoadMap.Count;
+                Title = $"{Utilities.GetDisplayName("Loadding")}{v} / {sum}";
+                if (v == sum)
                 {
                     ShowMessage(Utilities.GetDisplayName("Loaded"), InfoType.Success);
                     var window = new TBLWindow();

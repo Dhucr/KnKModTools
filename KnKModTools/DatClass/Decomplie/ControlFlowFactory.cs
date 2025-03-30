@@ -1,5 +1,6 @@
 ﻿using KnKModTools.Helper;
 using KnKModTools.UI;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
@@ -83,7 +84,7 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock trueBlock = core.GetTrueBlock(ctx, block);
             BasicBlock falseBlock = core.GetFalseBlock(ctx, block);
 
-            if (IsSwitchStructure(ctx, core, block, trueBlock, falseBlock, true))
+            if (IsTSwitchStructure(ctx, core, block, trueBlock, falseBlock))
             {
                 return BuildTSwitchNode(ctx, core, block);
             }
@@ -215,6 +216,7 @@ namespace KnKModTools.DatClass.Decomplie
             foreach (BasicBlock block in blocks)
             {
                 BlockNode b = CreateControlFlow(ctx, core, block);
+                if (ctx.IsIrreducibleCFG) break;
                 if (b == null) continue;
 
                 foreach (AstNode stam in b.Statements)
@@ -235,18 +237,33 @@ namespace KnKModTools.DatClass.Decomplie
             };
 
             AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
+            if (ctx.IsIrreducibleCFG) return null;
+            var nextBlock = header.FalseSuccessors.FirstOrDefault();
+            if (nextBlock is not null &&
+                core.GetAddress(nextBlock) == core.GetAddress(header))
+            {
+                switchNode.Cases.Last().Body = null;
+            }
 
             foreach (var block in header.FalseSuccessors)
             {
                 var match = core.GetCaseMatchValue(ctx, block, cond[0]);
                 if (match.Equals("NotCase")) break;
-                
+
                 AddCaseNode(ctx, core, block.TrueSuccessors, switchNode, match);
+                if (ctx.IsIrreducibleCFG) return null;
+
+                nextBlock = Utilities.GetNextElement(header.FalseSuccessors, block);
+                if (nextBlock is not null &&
+                    core.GetAddress(nextBlock) == core.GetAddress(block))
+                {
+                    switchNode.Cases.Last().Body = null;
+                }
             }
             switchNode.DefaultCase = new BlockNode();
 
             var lastIns = core.GetLastIns(header.TrueSuccessors);
-            if (lastIns.Code == 13)
+            if (lastIns is null || lastIns.Code == 13)
                 return switchNode;
 
             var endAddr = (uint)lastIns.Operands[0];
@@ -270,6 +287,7 @@ namespace KnKModTools.DatClass.Decomplie
             };
 
             AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
+            if (ctx.IsIrreducibleCFG) return null;
 
             foreach (var block in header.FalseSuccessors)
             {
@@ -277,6 +295,7 @@ namespace KnKModTools.DatClass.Decomplie
                 if (match.Equals("NotCase")) break;
 
                 AddCaseNode(ctx, core, block.TrueSuccessors, switchNode, match);
+                if (ctx.IsIrreducibleCFG) return null;
             }
             switchNode.DefaultCase = new BlockNode();
 
@@ -323,6 +342,7 @@ namespace KnKModTools.DatClass.Decomplie
                 if (match.Equals("NotCase")) break;
 
                 AddCaseNode(ctx, core, trueBlocks, switchNode, match);
+                if(ctx.IsIrreducibleCFG) break;
 
                 BasicBlock update = core.GetFalseBlock(ctx, ifFalseBlock);
                 if (update == null || update.Type != type) break;
@@ -369,8 +389,10 @@ namespace KnKModTools.DatClass.Decomplie
 
             AddConditionNode(ctx, core, header.TrueSuccessors,
                 chainNode, core.GetCondition(ctx, false));
+            if (ctx.IsIrreducibleCFG) return null;
 
             BasicBlock block = BuildChainNode(ctx, core, chainNode, falseBlock);
+            if (ctx.IsIrreducibleCFG) return null;
 
             if (block.FalseSuccessors.Count > 0)
             {
@@ -392,6 +414,7 @@ namespace KnKModTools.DatClass.Decomplie
                 if (cond == null) break;
 
                 AddConditionNode(ctx, core, trueBlocks, chainNode, cond);
+                if (ctx.IsIrreducibleCFG) break;
 
                 BasicBlock update = core.GetFalseBlock(ctx, falseBlock);
 
@@ -571,6 +594,80 @@ namespace KnKModTools.DatClass.Decomplie
                 var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
 
                 if (!targetEquals) return false;
+            }
+
+            var equals = false;
+            var test = false;
+            var list = new List<byte> { 2, 3, 7, 9 };
+            List<InStruction>? conBlock1 = falseBlock?.Instructions;
+            List<InStruction>? conBlock2 = header?.Instructions;
+
+            var min = Math.Min(conBlock1.Count, conBlock2.Count);
+            if (conBlock1[conBlock1.Count - 2].Code == 21 &&
+                    conBlock2[conBlock2.Count - 2].Code == 21)
+            {
+                equals = true;
+            }
+            for (var i = 3; i <= min; i++)
+            {
+                if (list.Contains(conBlock1[conBlock1.Count - i].Code) &&
+                    list.Contains(conBlock2[conBlock2.Count - i].Code))
+                {
+                    test = true;
+                }
+            }
+
+            return equals && test;
+        }
+
+        private static bool IsTSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header,
+            BasicBlock trueBlock, BasicBlock falseBlock)
+        {
+            var trueBlocks = header.TrueSuccessors;
+            var falseBlocks = header.FalseSuccessors;
+
+            if (falseBlocks is null) return false;
+            if (falseBlocks.Count == 0) return false;
+            var nextBlock = falseBlock;
+            if (trueBlocks is null || trueBlocks.Count == 0)
+            {
+                trueBlocks = falseBlock.TrueSuccessors;
+                while (true)
+                {
+                    if (trueBlocks is not null && trueBlocks.Count > 0)
+                    {
+                        trueBlock = trueBlocks.LastOrDefault();
+                        break;
+                    }
+                    nextBlock = Utilities.GetNextElement(falseBlocks, nextBlock);
+                    if (nextBlock is null) return false;
+                    if (core.GetAddress(nextBlock) != core.GetAddress(falseBlock)) return false;
+
+                    trueBlocks = nextBlock?.TrueSuccessors;
+                }
+
+                var isIfTrue = trueBlock?.Type == BlockType.Jump || trueBlock?.Type == BlockType.Exit;
+                if (!isIfTrue) return false;
+            }
+            else
+            {
+                var isIfTrue = trueBlock?.Type == BlockType.Jump || trueBlock?.Type == BlockType.Exit;
+
+                BasicBlock? jumpBlock = falseBlock?.TrueSuccessors?.LastOrDefault();
+                var isJump = jumpBlock?.Type == BlockType.Jump || jumpBlock?.Type == BlockType.Exit;
+
+                var typeCheck = isIfTrue && isJump;
+                if (!typeCheck) return false;
+
+                if (trueBlock?.Type != BlockType.Exit)
+                {
+                    InStruction? lastInTrueBlock = trueBlock?.Instructions.LastOrDefault();
+
+                    InStruction? jump = jumpBlock?.Instructions.LastOrDefault();
+                    var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
+
+                    if (!targetEquals) return false;
+                }
             }
 
             var equals = false;

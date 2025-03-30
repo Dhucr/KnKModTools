@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using KnKModTools.Helper;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
@@ -79,10 +80,7 @@ namespace KnKModTools.DatClass.Decomplie
                 LabelMap = [],
                 PendingClosures = new()
             };
-            if(function.Name == "FDChallengeSelect")
-            {
-                context.EvalStack.Clear();
-            }
+
             IEnumerable<string> array = Enumerable.Range(0, function.InArgs.Length).Select(i => $"arg{i}");
             foreach (var item in array)
             {
@@ -90,6 +88,12 @@ namespace KnKModTools.DatClass.Decomplie
             }
 
             AstNode func = BuildFunction(context, function.InStructions);
+
+            if (context.IsIrreducibleCFG)
+            {
+                LogHelper.Log($"{function.Name}:{Utilities.GetDisplayName("ICFGWarning")}");
+                return "";
+            }
 
             return _codeGenerate.Function(this, function, array, func.GenerateCode);
         }
@@ -134,6 +138,7 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 BlockNode node = ControlFlowFactory.CreateControlFlow(ctx, this, block);
 
+                if (ctx.IsIrreducibleCFG) break;
                 if (node == null) continue;
                 rootBlock.Statements.Add(node);
             }
