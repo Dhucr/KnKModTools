@@ -134,7 +134,7 @@ namespace KnKModTools.DatClass.Decomplie
             BasicBlock trueBlock = core.GetTrueBlock(ctx, block);
             BasicBlock falseBlock = core.GetFalseBlock(ctx, block);
 
-            if (IsSwitchStructure(ctx, core, block, trueBlock, falseBlock, false))
+            if (IsSwitchStructure(ctx, core, block, trueBlock, falseBlock))
             {
                 return BuildFSwitchNode(ctx, core, block);
             }
@@ -307,58 +307,6 @@ namespace KnKModTools.DatClass.Decomplie
             return switchNode;
         }
 
-        private static (SwitchNode, BasicBlock) BuildSwitchNode(DecompileContext ctx,
-            DecompilerCore core, BasicBlock header,
-            BasicBlock trueBlock, BasicBlock falseBlock,
-            BlockType type, bool isCheck = false)
-        {
-            var cond = core.GetCondition(ctx, true).Expression.Split(" == ");
-            var switchNode = new SwitchNode
-            {
-                TestExpression = new ExpressionNode() { Expression = cond[0] }
-            };
-
-            AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
-
-            BasicBlock block = BuildCaseNode(ctx, core, falseBlock, switchNode,
-                type, cond[0], isCheck);
-
-            switchNode.DefaultCase = new BlockNode();
-
-            return (switchNode, block);
-        }
-
-        private static BasicBlock BuildCaseNode(DecompileContext ctx,
-            DecompilerCore core, BasicBlock ifFalseBlock,
-            SwitchNode switchNode, BlockType type, string test,
-            bool isCheck = false)
-        {
-            while (true)
-            {
-                List<BasicBlock> trueBlocks = ifFalseBlock.TrueSuccessors;
-
-                var match = core.GetCaseMatchValue(ctx, ifFalseBlock, test);
-                if (match.Equals("NotCase")) break;
-
-                AddCaseNode(ctx, core, trueBlocks, switchNode, match);
-                if (ctx.IsIrreducibleCFG) break;
-
-                BasicBlock update = core.GetFalseBlock(ctx, ifFalseBlock);
-                if (update == null || update.Type != type) break;
-
-                if (isCheck)
-                {
-                    match = core.GetCaseMatchValue(ctx, update, test);
-                    update.Visited = false;
-                    if (match.Equals("NotCase")) break;
-                }
-
-                ifFalseBlock = update;
-            }
-
-            return ifFalseBlock;
-        }
-
         private static void AddCaseNode(DecompileContext ctx,
             DecompilerCore core, List<BasicBlock> blocks,
             SwitchNode switchNode, string match)
@@ -417,7 +365,7 @@ namespace KnKModTools.DatClass.Decomplie
 
                 BasicBlock update = core.GetFalseBlock(ctx, falseBlock);
 
-                if (update == null || update.Type != BlockType.IFFlase) break;
+                if (update == null || update.Type != BlockType.IFFalse) break;
 
                 falseBlock = update;
             }
@@ -544,7 +492,7 @@ namespace KnKModTools.DatClass.Decomplie
                         mergeBlock1.Equals(mergeBlock2);
                 }
 
-                if (jumpBlock?.Type == BlockType.IFFlase ||
+                if (jumpBlock?.Type == BlockType.IFFalse ||
                     jumpBlock?.Type == BlockType.IFTrue)
                 {
                     while (true)
@@ -566,59 +514,34 @@ namespace KnKModTools.DatClass.Decomplie
         }
 
         private static bool IsSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header,
-            BasicBlock trueBlock, BasicBlock falseBlock, bool isTF)
+            BasicBlock trueBlock, BasicBlock falseBlock)
         {
             if (falseBlock == null || trueBlock == null) return false;
 
-            if (ctx.Loop.IsInLoop && !isTF) return false;
+            if (ctx.Loop.IsInLoop) return false;
 
-            if (isTF && falseBlock.Type != BlockType.IFTrue) return false;
-
-            if (!isTF && falseBlock.Type != BlockType.IFFlase) return false;
+            if (falseBlock.Type != BlockType.IFFalse) return false;
 
             if (core.HasCallInstruction(falseBlock)) return false;
 
-            var isIfTrue = trueBlock.Type == BlockType.Jump || trueBlock.Type == BlockType.Exit;
-
             if (falseBlock?.TrueSuccessors.Count == 0) return false;
-            BasicBlock? jumpBlock = falseBlock?.TrueSuccessors?.LastOrDefault();
-            var isJump = jumpBlock?.Type == BlockType.Jump || trueBlock.Type == BlockType.Exit;
 
-            var typeCheck = isIfTrue && isJump;
+            var jumpBlock = core.GetTrueLastBlock(falseBlock);
+
+            var typeCheck = IsValidBlockType(trueBlock) && IsValidBlockType(jumpBlock);
             if (!typeCheck) return false;
 
-            if (trueBlock.Type != BlockType.Exit)
+            if (trueBlock.Type != BlockType.Exit && jumpBlock?.Type != BlockType.Exit)
             {
-                InStruction? lastInTrueBlock = trueBlock.Instructions.LastOrDefault();
+                var lastTrueIns = core.GetLastIns(trueBlock);
 
-                InStruction? jump = jumpBlock?.Instructions.LastOrDefault();
-                var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
+                var jumpIns = core.GetLastIns(jumpBlock);
+                var targetEquals = core.GetAddress(lastTrueIns) == core.GetAddress(jumpIns);
 
                 if (!targetEquals) return false;
             }
 
-            var equals = false;
-            var test = false;
-            var list = new List<byte> { 2, 3, 7, 9 };
-            List<InStruction>? conBlock1 = falseBlock?.Instructions;
-            List<InStruction>? conBlock2 = header?.Instructions;
-
-            var min = Math.Min(conBlock1.Count, conBlock2.Count);
-            if (conBlock1[conBlock1.Count - 2].Code == 21 &&
-                    conBlock2[conBlock2.Count - 2].Code == 21)
-            {
-                equals = true;
-            }
-            for (var i = 3; i <= min; i++)
-            {
-                if (list.Contains(conBlock1[conBlock1.Count - i].Code) &&
-                    list.Contains(conBlock2[conBlock2.Count - i].Code))
-                {
-                    test = true;
-                }
-            }
-
-            return equals && test;
+            return CheckInstructionPatterns(falseBlock.Instructions, header.Instructions);
         }
 
         private static bool IsTSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header,
@@ -629,6 +552,7 @@ namespace KnKModTools.DatClass.Decomplie
 
             if (falseBlocks is null) return false;
             if (falseBlocks.Count == 0) return false;
+
             var nextBlock = falseBlock;
             if (trueBlocks is null || trueBlocks.Count == 0)
             {
@@ -649,51 +573,47 @@ namespace KnKModTools.DatClass.Decomplie
 
                 if (falseBlocks.Count >= 2 && nextBlock.Equals(falseBlocks[^2])) return true;
 
-                var isIfTrue = trueBlock?.Type == BlockType.Jump || trueBlock?.Type == BlockType.Exit;
-                if (!isIfTrue) return false;
+                if (!IsValidBlockType(trueBlock)) return false;
             }
             else
             {
-                var isIfTrue = trueBlock?.Type == BlockType.Jump || trueBlock?.Type == BlockType.Exit;
-
-                BasicBlock? jumpBlock = falseBlock?.TrueSuccessors?.LastOrDefault();
-                var isJump = jumpBlock?.Type == BlockType.Jump || jumpBlock?.Type == BlockType.Exit;
-
-                var typeCheck = isIfTrue && isJump;
-                if (!typeCheck) return false;
+                if (!IsValidBlockType(trueBlock)) return false;
+                var jumpBlock = core.GetTrueLastBlock(falseBlock);
+                if (!IsValidBlockType(jumpBlock)) return false;
 
                 if (trueBlock?.Type != BlockType.Exit && jumpBlock?.Type != BlockType.Exit)
                 {
-                    InStruction? lastInTrueBlock = trueBlock?.Instructions.LastOrDefault();
+                    var lastTrueIns = core.GetLastIns(trueBlock);
 
-                    InStruction? jump = jumpBlock?.Instructions.LastOrDefault();
+                    var jumpIns = core.GetLastIns(jumpBlock);
 
-                    var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
+                    var targetEquals = core.GetAddress(lastTrueIns) == core.GetAddress(jumpIns);
 
                     if (!targetEquals) return false;
                 }
             }
 
-            var equals = false;
-            var test = false;
-            var list = new List<byte> { 2, 3, 7, 9 };
-            List<InStruction>? conBlock1 = falseBlock?.Instructions;
-            List<InStruction>? conBlock2 = header?.Instructions;
+            return CheckInstructionPatterns(falseBlock.Instructions, header.Instructions);
+        }
 
-            if (conBlock1 is null || conBlock2 is null ||
-                conBlock1.Count < 4 || conBlock2.Count < 4)
+        // 辅助方法：检查指令模式
+        private static bool CheckInstructionPatterns(List<InStruction> conBlock1, List<InStruction> conBlock2)
+        {
+            if (conBlock1 == null || conBlock2 == null || conBlock1.Count < 4 || conBlock2.Count < 4)
                 return false;
 
-            var min = Math.Min(conBlock1.Count, conBlock2.Count);
-            if (conBlock1[conBlock1.Count - 2].Code == 21 &&
-                    conBlock2[conBlock2.Count - 2].Code == 21)
+            // 检查倒数第二个指令是否为21
+            bool equals = conBlock1[^2].Code == 21 && conBlock2[^2].Code == 21;
+
+            // 检查是否包含特定指令代码(2,3,7,9)
+            var targetCodes = new HashSet<byte> { 2, 3, 7, 9 };
+            int min = Math.Min(conBlock1.Count, conBlock2.Count);
+            bool test = false;
+
+            for (int i = 3; i <= min; i++)
             {
-                equals = true;
-            }
-            for (var i = 3; i <= min; i++)
-            {
-                if (list.Contains(conBlock1[conBlock1.Count - i].Code) &&
-                    list.Contains(conBlock2[conBlock2.Count - i].Code))
+                if (targetCodes.Contains(conBlock1[^i].Code) &&
+                    targetCodes.Contains(conBlock2[^i].Code))
                 {
                     test = true;
                 }
@@ -702,33 +622,44 @@ namespace KnKModTools.DatClass.Decomplie
             return equals && test;
         }
 
+        // 辅助方法：检查块类型是否有效
+        private static bool IsValidBlockType(BasicBlock? block)
+        {
+            return block?.Type == BlockType.Jump || block?.Type == BlockType.Exit;
+        }
+
         private static bool IsFChainStructure(DecompileContext ctx, DecompilerCore core, BasicBlock trueBlock, BasicBlock falseBlock)
         {
-            if (trueBlock == null || falseBlock == null) return false;
-
-            if (falseBlock.Type != BlockType.IFFlase) return false;
-
-            var isIfTrue = trueBlock.Type == BlockType.Jump || trueBlock.Type == BlockType.Exit;
-
-            if (falseBlock?.TrueSuccessors.Count == 0) return false;
-
-            if (!isIfTrue) return false;
-
-            if (trueBlock.Type != BlockType.Exit)
+            // 基本条件检查
+            if (trueBlock == null || falseBlock == null ||
+                falseBlock.Type != BlockType.IFFalse ||
+                !IsValidBlockType(trueBlock) ||
+                falseBlock.TrueSuccessors.Count == 0)
             {
-                InStruction? lastInTrueBlock = trueBlock.Instructions.LastOrDefault();
-
-                InStruction? jump = falseBlock?.Instructions.LastOrDefault();
-                InStruction? last = falseBlock?.TrueSuccessors?.LastOrDefault()?.Instructions?.LastOrDefault();
-                if (last?.Code == 11)
-                {
-                    jump = last;
-                }
-                var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
-
-                if (!targetEquals) return false;
+                return false;
             }
 
+            // 对于非Exit块的特殊检查
+            if (trueBlock.Type != BlockType.Exit)
+            {
+                var trueJumpIns = core.GetLastIns(trueBlock);
+                var falseJumpIns = core.GetLastIns(falseBlock);
+
+                // 检查TrueSuccessors的最后指令是否为Code 11
+                var lastIns = core.GetTrueLastIns(falseBlock);
+                if (lastIns?.Code == 11)
+                {
+                    falseJumpIns = lastIns;
+                }
+
+                // 目标地址匹配检查
+                if (core.GetAddress(trueJumpIns) != core.GetAddress(falseJumpIns))
+                {
+                    return false;
+                }
+            }
+
+            // 获取条件表达式
             ExpressionNode cond = core.GetChainConditions(ctx, falseBlock);
             falseBlock.Visited = false;
 

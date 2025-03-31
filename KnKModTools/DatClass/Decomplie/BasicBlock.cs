@@ -16,5 +16,5 @@
     }
 
     public enum BlockType
-    { Base, IFFlase, IFTrue, Jump, Exit }
+    { Base, IFFalse, IFTrue, Jump, Exit }
 }

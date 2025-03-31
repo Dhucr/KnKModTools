@@ -245,7 +245,7 @@ namespace KnKModTools.DatClass.Decomplie
                         break;
 
                     case 15: // JUMPIFFALSE（条件为假时跳转）
-                        block.Type = BlockType.IFFlase;
+                        block.Type = BlockType.IFFalse;
                         /*var falseTarget = (uint)lastInstr.Operands[0];
                         block.TrueSuccessors.AddRange(
                             AddIFFalseElseBlocks(ctx, block, falseTarget));  // False分支
@@ -572,18 +572,57 @@ namespace KnKModTools.DatClass.Decomplie
             return block.Instructions.Any(i => i.Code == 12);
         }
 
-        public InStruction GetLastIns(List<BasicBlock> blocks)
+        public InStruction? GetLastIns(List<BasicBlock>? blocks)
         {
-            BasicBlock? lastBlock = blocks?.LastOrDefault();
-            InStruction? lastInstruction = lastBlock?.Instructions.LastOrDefault();
+            if (blocks is null || blocks.Count == 0) return null;
+
+            var lastBlock = blocks?.LastOrDefault();
+            var lastInstruction = lastBlock?.Instructions.LastOrDefault();
 
             return lastInstruction;
         }
 
-        public uint GetAddress(BasicBlock block)
+        public InStruction? GetLastIns(BasicBlock? block)
+        {
+            if (block is null) return null;
+
+            var lastInstruction = block.Instructions.LastOrDefault();
+
+            return lastInstruction;
+        }
+
+        public BasicBlock? GetTrueLastBlock(BasicBlock? blocks)
+        {
+            return blocks?.TrueSuccessors?.LastOrDefault();
+        }
+
+        public BasicBlock? GetFalseLastBlock(BasicBlock? blocks)
+        {
+            return blocks?.FalseSuccessors?.LastOrDefault();
+        }
+
+        public InStruction? GetTrueLastIns(BasicBlock? block)
+        {
+            if(block is null) return null;
+            return GetLastIns(block.TrueSuccessors);
+        }
+
+        public InStruction? GetFalseLastIns(BasicBlock? block)
+        {
+            if (block is null) return null;
+            return GetLastIns(block.FalseSuccessors);
+        }
+
+        public uint GetAddress(BasicBlock? block)
         {
             InStruction? last = block?.Instructions?.LastOrDefault();
-            return last == null ? 0 : (uint)last.Operands[0];
+            return GetAddress(last);
+        }
+
+        public uint GetAddress(InStruction? ins)
+        {
+            return ins is null || ins.Operands.Length == 0 ?
+                0 : (uint)ins.Operands[0];
         }
 
         public uint GetAddress(List<BasicBlock> blocks)
@@ -592,19 +631,19 @@ namespace KnKModTools.DatClass.Decomplie
             return last == null ? 0 : (uint)last.Operands[0];
         }
 
-        public uint GetOffset(BasicBlock block)
+        public uint GetOffset(BasicBlock? block)
         {
-            InStruction? last = block?.Instructions?.LastOrDefault();
+            var last = block?.Instructions?.LastOrDefault();
             return last == null ? 0 : last.Offset;
         }
 
-        public uint GetOffset(List<BasicBlock> blocks)
+        public uint GetOffset(List<BasicBlock>? blocks)
         {
-            InStruction? last = GetLastIns(blocks);
+            var last = GetLastIns(blocks);
             return last == null ? 0 : last.Offset;
         }
 
-        public byte GetCode(BasicBlock block)
+        public byte GetCode(BasicBlock? block)
         {
             InStruction? last = block?.Instructions?.LastOrDefault();
             return last == null ? (byte)66 : last.Code;
