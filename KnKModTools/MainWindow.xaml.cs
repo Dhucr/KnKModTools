@@ -20,6 +20,7 @@ namespace KnKModTools
     {
         public MainWindow()
         {
+            CheckAndCreateDirectories();
             FirstRun();
             // 初始化语言管理器
             LanguageManager.Initialize(GlobalSetting.Setting.ApplicationLanguage);
@@ -29,7 +30,6 @@ namespace KnKModTools
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LogHelper.Run();
-            CheckAndCreateDirectories();
 
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
