@@ -67,8 +67,6 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 Output.AppendLine(" * @param OutArgs: Empty");
             }
-            // 哈希值
-            Output.AppendLine($" * @hash {structInfo.Hash}");
             // 其他未知字段
             Output.AppendLine($" * @unknown1 {structInfo.Unknown1}");
             Output.AppendLine($" * @unknown2 {structInfo.Unknown2}");

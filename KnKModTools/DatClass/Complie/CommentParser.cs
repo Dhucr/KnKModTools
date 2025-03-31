@@ -1,14 +1,16 @@
-﻿using System.Text.RegularExpressions;
+﻿using KnKModTools.Helper;
+using System.Text.RegularExpressions;
 
 namespace KnKModTools.DatClass.Complie
 {
     public class CommentParser
     {
         private static readonly Regex ParamRegex = new(@"@param\s+(\w+):\s*(.+)");
-        private static readonly Regex MetaRegex = new(@"@(hash|unknown1|unknown2)\s+([\wx]+)");
+        private static readonly Regex MetaRegex = new(@"@(unknown1|unknown2)\s+([\wx]+)");
 
         public void Parse(string comment, Function func)
         {
+            func.Hash = FileDataHelper.ComputeCrc32(func.Name);
             var strs = comment.Split('\n');
             foreach (var line in comment.Split('\n'))
             {
@@ -56,10 +58,6 @@ namespace KnKModTools.DatClass.Complie
         {
             switch (key.ToLower())
             {
-                case "hash":
-                    metadata.Hash = Convert.ToUInt32(value);
-                    break;
-
                 case "unknown1":
                     metadata.Unknown1 = Convert.ToByte(value);
                     break;

@@ -945,10 +945,6 @@ namespace KnKModTools.DatClass.Complie
             {
                 _context.Func.Name = ident.Name;
             }
-            if (_context.Func.Name == "AniBtlHideCharaEffect")
-            {
-                _context.Func.Name = "AniBtlHideCharaEffect";
-            }
 
             _parser.Parse(_comments[_context.FunctionId].Value, _context.Func);
             _tempDat.FunctionMap.Add(_context.Func.Name, _context.FunctionId);
