@@ -64,6 +64,7 @@ namespace KnKModTools.DatClass
     {
         public string Name;
         public uint Value;
+        public uint Offset;
     }
 
     public class DatScript
@@ -85,6 +86,8 @@ namespace KnKModTools.DatClass
         public Variable[] VariableOuts;
 
         public Function[] Functions;
+
+        public List<byte> StringPool;
 
         private readonly string filename = "chr0000.dat";
 
@@ -427,6 +430,121 @@ namespace KnKModTools.DatClass
                 36 => 4,
                 _ => 1
             };
+        }
+
+        public void Save(string name)
+        {
+            using var fs = new FileStream(name, FileMode.Create);
+            using var writer = new BinaryWriter(fs);
+
+            WriteMagicHeader(writer);
+            WriteMainHeader(writer);
+            WriteFunctionTable(writer);
+            WriteGlobalVariables(writer);
+            WriteFunctionArgs(writer);
+            WriteInstructions(writer);
+            writer.Write(StringPool.ToArray());
+            writer.Flush();
+        }
+
+        private void WriteMagicHeader(BinaryWriter writer)
+        {
+            writer.Write(Encoding.ASCII.GetBytes(Flag));
+        }
+
+        private void WriteMainHeader(BinaryWriter writer)
+        {
+            writer.Write(StartOff);
+            writer.Write(FunctionCount);
+            writer.Write(VariableOff);
+            writer.Write(VariableInCount);
+            writer.Write(VariableOutCount);
+        }
+
+        private void WriteFunctionTable(BinaryWriter writer)
+        {
+            foreach (var func in Functions)
+            {
+                writer.Write(func.Start);
+                writer.Write(func.VarIn);
+                writer.Write(func.Unknown1);
+                writer.Write(func.Unknown2);
+                writer.Write(func.VarOut);
+                writer.Write(func.OutOff);
+                writer.Write(func.InOff);
+                writer.Write(func.StructCount);
+                writer.Write(func.StructOff);
+                writer.Write(func.Hash);
+                writer.Write(func.NameOff);
+            }
+        }
+        private void WriteGlobalVariables(BinaryWriter writer)
+        {
+            foreach (var var in VariableIns)
+            {
+                writer.Write(var.Offset);
+                writer.Write(var.Value);
+            }
+        }
+
+        private void WriteFunctionArgs(BinaryWriter writer)
+        {
+            foreach (var func in Functions)
+            {
+                foreach (var arg in func.OutArgs)
+                {
+                    WriteValue(writer, arg);
+                }
+            }
+
+            foreach (var func in Functions)
+            {
+                foreach (var arg in func.InArgs)
+                {
+                    WriteValue(writer, arg);
+                }
+            }
+        }
+
+        private void WriteInstructions(BinaryWriter writer)
+        {
+            foreach (var func in Functions)
+            {
+                foreach (var ins in func.InStructions)
+                {
+                    writer.Write(ins.Code);
+                    if (ins.Operands != null)
+                    {
+                        foreach (var op in ins.Operands)
+                        {
+                            WriteValue(writer, op);
+                        }
+                    }
+                }
+            }
+        }
+        private static void WriteValue(BinaryWriter bw, object value)
+        {
+            switch (value)
+            {
+                case byte bVal:
+                    bw.Write(bVal);
+                    break;
+                case ushort sVal:
+                    bw.Write(sVal);
+                    break;
+                case uint uVal:
+                    bw.Write(uVal);
+                    break;
+                case int iVal:
+                    bw.Write(iVal);
+                    break;
+                case float fVal:
+                    bw.Write(fVal);
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported type: {value?.GetType().Name}");
+            }
         }
 
         #endregion Helper Methods

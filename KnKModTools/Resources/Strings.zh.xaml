@@ -238,7 +238,6 @@
 
     <system:String x:Key="NoteText">笔记文本</system:String>
 
-
     <system:String x:Key="MainTitle">界之轨迹修改工具</system:String>
     <system:String x:Key="File">文件</system:String>
     <system:String x:Key="Setting">设置</system:String>
@@ -254,6 +253,7 @@
     <system:String x:Key="GameRootPath">游戏根目录：</system:String>
     <system:String x:Key="ScriptOutputPath">脚本输出目录：</system:String>
     <system:String x:Key="TableLanguage">Table语言：</system:String>
+    <system:String x:Key="AppLanguage">程序语言：</system:String>
     <system:String x:Key="Save">保存</system:String>
     <system:String x:Key="Cancel">取消</system:String>
 
@@ -265,7 +265,10 @@
     <system:String x:Key="Saved">保存完成！</system:String>
     <system:String x:Key="Decompiling">正在反编译...</system:String>
     <system:String x:Key="Decompiled">反编译完成！</system:String>
+    <system:String x:Key="Compiling">正在编译...</system:String>
+    <system:String x:Key="Compiled">编译完成！</system:String>
     <system:String x:Key="WarningCFG">遇到不可规约流图！</system:String>
     <system:String x:Key="ICFGWarning">函数中包含不可规约流图</system:String>
     <system:String x:Key="DecompileScript">反编译脚本</system:String>
+    <system:String x:Key="CompileScript">编译脚本</system:String>
 </ResourceDictionary>

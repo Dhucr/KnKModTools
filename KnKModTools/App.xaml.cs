@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using KnKModTools.Localization;
+using System.Windows;
 
 namespace KnKModTools
 {

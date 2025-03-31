@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:KnKModTools.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="window"
-    Title="系统设置"
+    Title="{DynamicResource Setting}"
     Width="500"
     Height="300"
     Icon="/Resources/Icons/knk.ico"
@@ -15,6 +15,7 @@
     mc:Ignorable="d">
     <Grid Margin="15">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -31,7 +32,7 @@
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource GlobalFont}"
                 FontSize="{StaticResource GlobalFontSize}"
-                Text="{StaticResource GameRootPath}" />
+                Text="{DynamicResource GameRootPath}" />
             <TextBox
                 x:Name="GamePathBox"
                 Width="250"
@@ -50,7 +51,7 @@
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource GlobalFont}"
                 FontSize="{StaticResource GlobalFontSize}"
-                Text="{StaticResource ScriptOutputPath}" />
+                Text="{DynamicResource ScriptOutputPath}" />
             <TextBox
                 x:Name="ScriptPathBox"
                 Width="250"
@@ -66,7 +67,7 @@
                 VerticalAlignment="Center"
                 FontFamily="{StaticResource GlobalFont}"
                 FontSize="{StaticResource GlobalFontSize}"
-                Text="{StaticResource TableLanguage}" />
+                Text="{DynamicResource TableLanguage}" />
             <ComboBox
                 x:Name="LangCombo"
                 Width="120"
@@ -74,21 +75,41 @@
                 FontSize="{StaticResource GlobalFontSize}"
                 SelectedItem="{Binding TableLanguage}" />
         </StackPanel>
+        <!--  程序语言选择  -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <TextBlock
+                Width="120"
+                VerticalAlignment="Center"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                Text="{DynamicResource AppLanguage}" />
+            <ComboBox
+                x:Name="AppLangCombo"
+                Width="120"
+                FontFamily="{StaticResource GlobalFont}"
+                FontSize="{StaticResource GlobalFontSize}"
+                SelectionChanged="AppLangCombo_SelectionChanged">
+                <ComboBoxItem Tag="zh-CN">中文</ComboBoxItem>
+                <ComboBoxItem Tag="ja-JP">日本語</ComboBoxItem>
+                <ComboBoxItem Tag="ko-KR">한국어</ComboBoxItem>
+                <ComboBoxItem Tag="en-US">English</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
         <!--  按钮区域  -->
         <StackPanel
-            Grid.Row="4"
+            Grid.Row="5"
             HorizontalAlignment="Right"
             Orientation="Horizontal">
             <Button
                 Width="80"
                 Margin="0,0,10,0"
                 Click="SaveButton_Click"
-                Content="{StaticResource Save}"
+                Content="{DynamicResource Save}"
                 FontFamily="{StaticResource GlobalFont}" />
             <Button
                 Width="80"
                 Click="CancelButton_Click"
-                Content="{StaticResource Cancel}"
+                Content="{DynamicResource Cancel}"
                 FontFamily="{StaticResource GlobalFont}" />
         </StackPanel>
     </Grid>

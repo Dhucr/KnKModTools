@@ -1,6 +1,7 @@
 ﻿using HandyControl.Controls;
 using HandyControl.Data;
 using KnKModTools.Helper;
+using KnKModTools.Localization;
 using KnKModTools.TblClass;
 using KnKModTools.UI;
 using System.Collections.Concurrent;
@@ -19,6 +20,9 @@ namespace KnKModTools
     {
         public MainWindow()
         {
+            FirstRun();
+            // 初始化语言管理器
+            LanguageManager.Initialize(GlobalSetting.Setting.ApplicationLanguage);
             InitializeComponent();
         }
 
@@ -34,8 +38,6 @@ namespace KnKModTools
             bitmapImage.EndInit();
             StartImage.Source = bitmapImage;
 
-            FirstRun();
-
             TBLInit();
         }
 
@@ -48,7 +50,7 @@ namespace KnKModTools
 
                 if (result != true)
                 {
-                    MessageBox.Show(Utilities.GetDisplayName("FirstRunTip"));
+                    MessageBox.Show(LanguageManager.GetString("FirstRunTip"));
                     Application.Current.Shutdown();
                     return;
                 }
@@ -141,10 +143,10 @@ namespace KnKModTools
             Dispatcher.Invoke(() =>
             {
                 var sum = TBLData.TBLoadMap.Count;
-                Title = $"{Utilities.GetDisplayName("Loadding")}{v} / {sum}";
+                Title = $"{LanguageManager.GetString("Loadding")}{v} / {sum}";
                 if (v == sum)
                 {
-                    ShowMessage(Utilities.GetDisplayName("Loaded"), InfoType.Success);
+                    ShowMessage(LanguageManager.GetString("Loaded"), InfoType.Success);
                     var window = new TBLWindow();
                     window.Show();
                     this.Close();

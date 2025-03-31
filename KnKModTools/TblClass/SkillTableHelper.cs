@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using System.IO;
 using static KnKModTools.TblClass.DataPoolManager;
 
@@ -84,16 +85,16 @@ namespace KnKModTools.TblClass
 
             var rangeArray = new RangeTypeTable[]
             {
-                new RangeTypeTable(0, Utilities.GetDisplayName("Null")),
-                new RangeTypeTable(257, Utilities.GetDisplayName("Monomer")),
-                new RangeTypeTable(265, Utilities.GetDisplayName("MoveMonomer")),
-                new RangeTypeTable(277, Utilities.GetDisplayName("GoalLine")),
-                new RangeTypeTable(278, Utilities.GetDisplayName("PointLine")),
-                new RangeTypeTable(286, Utilities.GetDisplayName("MovePointLine")),
-                new RangeTypeTable(293, Utilities.GetDisplayName("Circle")),
-                new RangeTypeTable(4388, Utilities.GetDisplayName("Sector")),
-                new RangeTypeTable(166, Utilities.GetDisplayName("All")),
-                new RangeTypeTable(301, Utilities.GetDisplayName("Unknown"))
+                new RangeTypeTable(0, LanguageManager.GetString("Null")),
+                new RangeTypeTable(257, LanguageManager.GetString("Monomer")),
+                new RangeTypeTable(265, LanguageManager.GetString("MoveMonomer")),
+                new RangeTypeTable(277, LanguageManager.GetString("GoalLine")),
+                new RangeTypeTable(278, LanguageManager.GetString("PointLine")),
+                new RangeTypeTable(286, LanguageManager.GetString("MovePointLine")),
+                new RangeTypeTable(293, LanguageManager.GetString("Circle")),
+                new RangeTypeTable(4388, LanguageManager.GetString("Sector")),
+                new RangeTypeTable(166, LanguageManager.GetString("All")),
+                new RangeTypeTable(301, LanguageManager.GetString("Unknown"))
             };
             TBL.SubHeaderMap.Add("RangeTypeTable", rangeArray);
 

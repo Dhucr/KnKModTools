@@ -192,7 +192,7 @@ namespace KnKModTools
 
             foreach (KeyValuePair<int, string> item in dic)
             {
-                sw.WriteLine($"{item.Key} = {item.Value}");
+                //sw.WriteLine($"{item.Key} = {item.Value}");
             }
         }
 
@@ -222,12 +222,9 @@ namespace KnKModTools
             //tbl.Handler.InserNode(newNode, tbl.ConditionHelpList.Last(), data);
         }
 
-        private static StreamWriter sw = new(Path.Combine(Environment.CurrentDirectory, "log.txt"));
 
         public static void Log(string log)
-        {
-            sw.WriteLine(log);
-            sw.Flush();
+        { 
         }
 
         public static void Log2(string name, string log)
@@ -241,7 +238,6 @@ namespace KnKModTools
 
         public static void CloseLog()
         {
-            sw.Close();
         }
 
         public void ProcessNestedObjects(object root, Action<object> action)

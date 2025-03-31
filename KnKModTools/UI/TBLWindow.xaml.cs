@@ -1,8 +1,11 @@
-﻿using HandyControl.Controls;
+﻿using Esprima;
+using HandyControl.Controls;
 using HandyControl.Data;
 using KnKModTools.DatClass;
+using KnKModTools.DatClass.Complie;
 using KnKModTools.DatClass.Decomplie;
 using KnKModTools.Helper;
+using KnKModTools.Localization;
 using KnKModTools.TblClass;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Collections.Concurrent;
@@ -99,7 +102,7 @@ namespace KnKModTools.UI
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
-            ShowMessage(Utilities.GetDisplayName("Saving"));
+            ShowMessage(LanguageManager.GetString("Saving"));
             var syncLock = new object();
             var exceptions = new ConcurrentQueue<Exception>();
             Task.Run(() =>
@@ -130,7 +133,7 @@ namespace KnKModTools.UI
                     throw new AggregateException(exceptions);
                 }
 
-                ShowMessage(Utilities.GetDisplayName("Saved"), InfoType.Success);
+                ShowMessage(LanguageManager.GetString("Saved"), InfoType.Success);
             });
         }
 
@@ -259,72 +262,122 @@ namespace KnKModTools.UI
                 Task.Run(() =>
                 {
                     FileDataHelper.SaveTBL(CurrentTbl, action);
-                    ShowMessage(Utilities.GetDisplayName("Saved"), InfoType.Success);
+                    ShowMessage(LanguageManager.GetString("Saved"), InfoType.Success);
                 });
             }
         }
 
         private void LoadScpBtn_Click(object sender, RoutedEventArgs e)
         {
-            using var dialog = new CommonOpenFileDialog
+            var dialog = new Microsoft.Win32.OpenFileDialog()
             {
-                IsFolderPicker = false,
+                Filter = "DatScript Files (*.dat)|*.dat",
                 Multiselect = true,
-                DefaultExtension = ".dat",
-                DefaultDirectory = GlobalSetting.ScriptDirectory
+                InitialDirectory = GlobalSetting.ScriptDirectory,
+                Title = LanguageManager.GetString("DecompileScript")
             };
+            if (dialog.ShowDialog() == false)
+                return;
 
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                /*DatScript dat1 = new DatScript();
+            /*DatScript dat1 = new DatScript();
                 dat1.Load(dialog.FileName);
                 Debug.Log2(Path.GetFileNameWithoutExtension(dialog.FileName) + ".txt", DatScript.GenerateClassString(dat1));*/
 
-                /*var dat = new DatScript();
-                dat.Load(dialog.FileName);
-                var core = new DecompilerCore(dat);
-                using var sw = new StreamWriter(
-                    Path.Combine(GlobalSetting.Setting.OutputDir,
-                    Path.GetFileNameWithoutExtension(dialog.FileName) + ".js"));
-                sw.Write(core.DecompileDatScript());
-                sw.Flush();*/
+            /*var dat = new DatScript();
+            dat.Load(dialog.FileName);
+            var core = new DecompilerCore(dat);
+            using var sw = new StreamWriter(
+                Path.Combine(GlobalSetting.Setting.OutputDir,
+                Path.GetFileNameWithoutExtension(dialog.FileName) + ".js"));
+            sw.Write(core.DecompileDatScript());
+            sw.Flush();*/
 
-                var syncLock = new object();
-                var exceptions = new ConcurrentQueue<Exception>();
-                ShowMessage(Utilities.GetDisplayName("Decompiling"));
-                Task.Run(() =>
+            var syncLock = new object();
+            var exceptions = new ConcurrentQueue<Exception>();
+            ShowMessage(LanguageManager.GetString("Decompiling"));
+            Task.Run(() =>
+            {
+                Parallel.ForEach(dialog.FileNames, new ParallelOptions
                 {
-                    Parallel.ForEach(dialog.FileNames, new ParallelOptions
+                    MaxDegreeOfParallelism = GlobalSetting.Setting.ThreadCount // 根据CPU核心数优化
+                }, file =>
+                {
+                    try
                     {
-                        MaxDegreeOfParallelism = GlobalSetting.Setting.ThreadCount // 根据CPU核心数优化
-                    }, file =>
-                    {
-                        try
-                        {
-                            var dat = new DatScript();
-                            dat.Load(file);
-                            var core = new DecompilerCore(dat);
-                            using var sw = new StreamWriter(
-                                Path.Combine(GlobalSetting.Setting.OutputDir,
-                                Path.GetFileNameWithoutExtension(file) + ".js"));
-                            LogHelper.Log($"{Utilities.GetDisplayName("DecompileScript")}:{file}");
-                            sw.Write(core.DecompileDatScript());
-                            sw.Flush();
-                        }
-                        catch (Exception ex)
-                        {
-                            exceptions.Enqueue(ex);
-                        }
-                    });
-
-                    if (!exceptions.IsEmpty && exceptions.TryDequeue(out var ex))
-                    {
-                        ShowMessage(ex.Message, InfoType.Error);
+                        var dat = new DatScript();
+                        dat.Load(file);
+                        var core = new DecompilerCore(dat);
+                        using var sw = new StreamWriter(
+                            Path.Combine(GlobalSetting.Setting.OutputDir,
+                            Path.GetFileNameWithoutExtension(file) + ".js"));
+                        LogHelper.Log($"{LanguageManager.GetString("DecompileScript")}:{file}");
+                        sw.Write(core.DecompileDatScript());
+                        sw.Flush();
                     }
-
-                    ShowMessage(Utilities.GetDisplayName("Decompiled"), InfoType.Success);
+                    catch (Exception ex)
+                    {
+                        exceptions.Enqueue(ex);
+                    }
                 });
-            }
+
+                if (!exceptions.IsEmpty && exceptions.TryDequeue(out var ex))
+                {
+                    ShowMessage(ex.Message, InfoType.Error);
+                    LogHelper.Log(ex.Message);
+                }
+
+                ShowMessage(LanguageManager.GetString("Decompiled"), InfoType.Success);
+            });
+        }
+
+        private void ComplieScpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog()
+            {
+                Filter = "JavaScript Files (*.js)|*.js",
+                Multiselect = true,
+                InitialDirectory = GlobalSetting.ScriptDirectory,
+                Title = LanguageManager.GetString("CompileScript")
+            };
+            if (dialog.ShowDialog() == false)
+                return;
+
+            var syncLock = new object();
+            var exceptions = new ConcurrentQueue<Exception>();
+            ShowMessage(LanguageManager.GetString("Compiling"));
+            Task.Run(() =>
+            {
+                Parallel.ForEach(dialog.FileNames, new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = GlobalSetting.Setting.ThreadCount // 根据CPU核心数优化
+                }, file =>
+                {
+                    try
+                    {
+                        LogHelper.Log($"{LanguageManager.GetString("CompileScript")}:{file}");
+                        var parser = new JavaScriptParser(new ParserOptions() { Comments = true });
+                        using var sr = new StreamReader(file);
+                        var code = sr.ReadToEnd();
+                        var program = parser.ParseScript(code);
+                        var tempDat = new ComplieCore().Generate(program);
+                        var dat = DatGenerator.BuildDat(tempDat);
+                        dat.Save(Path.Combine(GlobalSetting.Setting.OutputDir,
+                            Path.GetFileNameWithoutExtension(file) + ".dat"));
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptions.Enqueue(ex);
+                    }
+                });
+
+                if (!exceptions.IsEmpty && exceptions.TryDequeue(out var ex))
+                {
+                    ShowMessage(ex.Message, InfoType.Error);
+                    LogHelper.Log(ex.Message);
+                }
+
+                ShowMessage(LanguageManager.GetString("Compiled"), InfoType.Success);
+            });
         }
 
         private void About_MenuItem_Click(object sender, RoutedEventArgs e)

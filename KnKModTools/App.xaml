@@ -18,7 +18,7 @@
                 <Setter Property="Margin" Value="5,0,0,0" />
                 <Setter Property="FontFamily" Value="{StaticResource GlobalFont}" />
                 <Setter Property="FontSize" Value="{StaticResource GlobalFontSize}" />
-                <Setter Property="Content" Value="{StaticResource Browse}" />
+                <Setter Property="Content" Value="{DynamicResource Browse}" />
             </Style>
         </ResourceDictionary>
     </Application.Resources>

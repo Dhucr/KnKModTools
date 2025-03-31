@@ -23,6 +23,7 @@ namespace KnKModTools
     {
         public string RootDirectory { get; set; }
         public string Language { get; set; }
+        public string ApplicationLanguage { get; set;}
         public string OutputDir { get; set; }
         public int ThreadCount { get; set; } = 4;
     }

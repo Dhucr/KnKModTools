@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -88,10 +89,10 @@ namespace KnKModTools.DatClass.Decomplie
             }
 
             AstNode func = BuildFunction(context, function.InStructions);
-
+            
             if (context.IsIrreducibleCFG)
             {
-                LogHelper.Log($"{function.Name}:{Utilities.GetDisplayName("ICFGWarning")}");
+                LogHelper.Log($"{function.Name}:{LanguageManager.GetString("ICFGWarning")}");
                 return "";
             }
 
@@ -329,7 +330,7 @@ namespace KnKModTools.DatClass.Decomplie
                 }
                 
                 if (nextBlock is null) break;
-                if (nextBlock.StartAddr == endAddr) break;
+                if (nextBlock.StartAddr >= endAddr) break;
 
                 falseBlock = nextBlock;
             }
@@ -354,7 +355,8 @@ namespace KnKModTools.DatClass.Decomplie
 
                 falseSuccessors.Add(nextBlock);
                 falseBlock = nextBlock;
-                if (GetCode(nextBlock) == 11) break;
+                if (GetCode(nextBlock) == 11 &&
+                    GetAddress(nextBlock) >= endAddr) break;
             }
 
             if (falseSuccessors.Count == 0) return;
@@ -365,6 +367,7 @@ namespace KnKModTools.DatClass.Decomplie
             if (last is null) return;
             if (!IsBranching(last.Code)) return;
 
+
             endAddr = (uint)last.Operands[0];
             if (endAddr < last.Offset) return;
             if (endAddr == trueBlock.StartAddr) return;
@@ -374,7 +377,7 @@ namespace KnKModTools.DatClass.Decomplie
                 trueSuccessors.Add(trueBlock);
                 var nextBlock = GetNextBlock(ctx, trueBlock);
                 if (nextBlock is null) break;
-                if (nextBlock.StartAddr == endAddr) break;
+                if (nextBlock.StartAddr >= endAddr) break;
 
                 trueBlock = nextBlock;
             }
@@ -564,6 +567,11 @@ namespace KnKModTools.DatClass.Decomplie
         }
 
         #region 控制流工具方法
+
+        public bool HasCallInstruction(BasicBlock block)
+        {
+            return block.Instructions.Any(i => i.Code == 12);
+        }
 
         public InStruction GetLastIns(List<BasicBlock> blocks)
         {

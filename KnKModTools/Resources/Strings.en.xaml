@@ -1,0 +1,274 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:system="clr-namespace:System;assembly=netstandard">
+    <system:String x:Key="ItemId">Item ID</system:String>
+    <system:String x:Key="CharLimit">Character Limit</system:String>
+    <system:String x:Key="ItemKind">Item Category</system:String>
+    <system:String x:Key="ItemSubKind">Item Subcategory</system:String>
+    <system:String x:Key="Icon">Icon</system:String>
+    <system:String x:Key="ItemIcon">Item Icon</system:String>
+    <system:String x:Key="EffectIcon">Effect Icon</system:String>
+    <system:String x:Key="Attr">Attribute</system:String>
+    <system:String x:Key="Effect">Effect</system:String>
+    <system:String x:Key="EffectId">Effect ID</system:String>
+    <system:String x:Key="PhysicalAttack">Physical Attack</system:String>
+    <system:String x:Key="PhysicalDefense">Physical Defense</system:String>
+    <system:String x:Key="MagicAttack">Magic Attack</system:String>
+    <system:String x:Key="MagicDefense">Magic Defense</system:String>
+    <system:String x:Key="Accuracy">Accuracy</system:String>
+    <system:String x:Key="Dodge">Evasion</system:String>
+    <system:String x:Key="MagicDodge">Magic Evasion</system:String>
+    <system:String x:Key="Critical">Critical Rate</system:String>
+    <system:String x:Key="UpperLimit">Carry Limit</system:String>
+    <system:String x:Key="Price">Price</system:String>
+    <system:String x:Key="Animation">Animation</system:String>
+    <system:String x:Key="Name">Name</system:String>
+    <system:String x:Key="Description">Description</system:String>
+    <system:String x:Key="KindName">Category Name</system:String>
+    <system:String x:Key="EarthCost">Earth Sepith Cost</system:String>
+    <system:String x:Key="WaterCost">Water Sepith Cost</system:String>
+    <system:String x:Key="FireCost">Fire Sepith Cost</system:String>
+    <system:String x:Key="WindCost">Wind Sepith Cost</system:String>
+    <system:String x:Key="TimeCost">Time Sepith Cost</system:String>
+    <system:String x:Key="SpaceCost">Space Sepith Cost</system:String>
+    <system:String x:Key="MirageCost">Mirage Sepith Cost</system:String>
+    <system:String x:Key="EarthAmount">Earth Sepith Provided</system:String>
+    <system:String x:Key="WaterAmount">Water Sepith Provided</system:String>
+    <system:String x:Key="FireAmount">Fire Sepith Provided</system:String>
+    <system:String x:Key="WindAmount">Wind Sepith Provided</system:String>
+    <system:String x:Key="TimeAmount">Time Sepith Provided</system:String>
+    <system:String x:Key="SpaceAmount">Space Sepith Provided</system:String>
+    <system:String x:Key="MirageAmount">Mirage Sepith Provided</system:String>
+    <system:String x:Key="UnknownArray">Unknown Array</system:String>
+    <system:String x:Key="Count">Array Length</system:String>
+    <system:String x:Key="RangeType">Range Type</system:String>
+    <system:String x:Key="Color">Color Marker</system:String>
+    <system:String x:Key="SubId">Sub ID</system:String>
+    <system:String x:Key="TextShowType">Text Display Type</system:String>
+    <system:String x:Key="SubName">Subcategory Name</system:String>
+    <system:String x:Key="SkillRangeId">Skill Range ID</system:String>
+    <system:String x:Key="Param1">Parameter 1</system:String>
+    <system:String x:Key="Param2">Parameter 2</system:String>
+    <system:String x:Key="Param3">Parameter 3</system:String>
+    <system:String x:Key="Param4">Parameter 4</system:String>
+    <system:String x:Key="Param5">Parameter 5</system:String>
+    <system:String x:Key="Param6">Parameter 6</system:String>
+    <system:String x:Key="InitialLevel">Initial Level</system:String>
+    <system:String x:Key="MaxLevel">Max Level</system:String>
+
+    <system:String x:Key="SBoostAbilityType">S-Boost Ability Type</system:String>
+    <system:String x:Key="SBoostAbilityName">S-Boost Ability Name</system:String>
+    <system:String x:Key="VoiceId">Voice ID</system:String>
+    <system:String x:Key="Level">Level</system:String>
+    <system:String x:Key="IdReference">Reference ID</system:String>
+    <system:String x:Key="ParamIndex">Parameter Index</system:String>
+    <system:String x:Key="EffectName">Effect Name</system:String>
+    <system:String x:Key="EffectDescription">Effect Description</system:String>
+    <system:String x:Key="VoiceArray">Voice List</system:String>
+
+    <system:String x:Key="CustomSolt">Custom Slot Count</system:String>
+    <system:String x:Key="FixedSolt">Fixed Slot Count</system:String>
+    <system:String x:Key="SumSolt">Total Slots</system:String>
+    <system:String x:Key="SoltInx">Slot Index</system:String>
+    <system:String x:Key="UnLockLevel">Unlock Level</system:String>
+    <system:String x:Key="SkillId">Skill ID</system:String>
+
+    <system:String x:Key="Type">Type</system:String>
+    <system:String x:Key="EarthRequirement">Earth Requirement</system:String>
+    <system:String x:Key="WaterRequirement">Water Requirement</system:String>
+    <system:String x:Key="FireRequirement">Fire Requirement</system:String>
+    <system:String x:Key="WindRequirement">Wind Requirement</system:String>
+    <system:String x:Key="TimeRequirement">Time Requirement</system:String>
+    <system:String x:Key="SpaceRequirement">Space Requirement</system:String>
+    <system:String x:Key="MirageRequirement">Mirage Requirement</system:String>
+    <system:String x:Key="BaseChance">Base Trigger Chance</system:String>
+    <system:String x:Key="SclmBaseChance">Sclm Base Trigger Chance</system:String>
+    <system:String x:Key="SboostChance">S-Boost Trigger Chance</system:String>
+    <system:String x:Key="SclmSboostChance">Sclm S-Boost Trigger Chance</system:String>
+    <system:String x:Key="FullBoostChance">Full Boost Trigger Chance</system:String>
+    <system:String x:Key="UpgradeId">Upgrade ID</system:String>
+    <system:String x:Key="Condition">Trigger Condition</system:String>
+    <system:String x:Key="SkillSubstituteId">Activate Skill ID</system:String>
+
+    <system:String x:Key="ShopName">Shop Name</system:String>
+    <system:String x:Key="ShopType">Shop Type</system:String>
+    <system:String x:Key="PricePercent">Shop Price Percentage</system:String>
+    <system:String x:Key="ShopId">Shop ID</system:String>
+    <system:String x:Key="EarthSepithExchangeRate">Earth Sepith Exchange Rate</system:String>
+    <system:String x:Key="WaterSepithExchangeRate">Water Sepith Exchange Rate</system:String>
+    <system:String x:Key="FireSepithExchangeRate">Fire Sepith Exchange Rate</system:String>
+    <system:String x:Key="WindSepithExchangeRate">Wind Sepith Exchange Rate</system:String>
+    <system:String x:Key="TimeSepithExchangeRate">Time Sepith Exchange Rate</system:String>
+    <system:String x:Key="SpaceSepithExchangeRate">Space Sepith Exchange Rate</system:String>
+    <system:String x:Key="MirageSepithExchangeRate">Mirage Sepith Exchange Rate</system:String>
+    <system:String x:Key="SepithMassExchangeRate">Sepith Mass Exchange Rate</system:String>
+    <system:String x:Key="TradeItem">Trade Item</system:String>
+    <system:String x:Key="TradeMaterial">Trade Material</system:String>
+    <system:String x:Key="TradeMaterialItemID">Trade Material Item ID</system:String>
+
+    <system:String x:Key="CharacterId">Character ID</system:String>
+    <system:String x:Key="Text">Text</system:String>
+    <system:String x:Key="Percentage">Percentage</system:String>
+    <system:String x:Key="LevelLearn">Learn Level</system:String>
+    <system:String x:Key="RecoveryDelay">Recovery Delay</system:String>
+    <system:String x:Key="CastDelay">Cast Delay</system:String>
+    <system:String x:Key="StunChance">Stun Chance</system:String>
+    <system:String x:Key="Cost">Cost</system:String>
+    <system:String x:Key="RangeAngle">Sector Angle</system:String>
+    <system:String x:Key="RangeAttack">Attack Range</system:String>
+    <system:String x:Key="RangeMove">Move Range</system:String>
+
+    <system:String x:Key="Texture">Texture</system:String>
+    <system:String x:Key="Face">Face</system:String>
+    <system:String x:Key="Model">Model</system:String>
+    <system:String x:Key="FullName">Full Name</system:String>
+    <system:String x:Key="EngName">English Name</system:String>
+
+    <system:String x:Key="Small">Small</system:String>
+    <system:String x:Key="Medium">Medium</system:String>
+    <system:String x:Key="Large">Large</system:String>
+
+    <system:String x:Key="WildernessPA">Wilderness Physical Attack</system:String>
+    <system:String x:Key="WildernessMA">Wilderness Magic Attack</system:String>
+    <system:String x:Key="Null">Null</system:String>
+    <system:String x:Key="Wilderness5">Wilderness 5</system:String>
+    <system:String x:Key="WildernessPowerA">Wilderness Power Attack</system:String>
+    <system:String x:Key="Wilderness9">Wilderness 9</system:String>
+    <system:String x:Key="KnockUp">Knock Up</system:String>
+    <system:String x:Key="CombatPA">Combat Physical Attack Ratio</system:String>
+    <system:String x:Key="CombatMA">Combat Magic Attack Ratio</system:String>
+    <system:String x:Key="YoldaShadow">Yolda's Shadow</system:String>
+    <system:String x:Key="ScatterChips">Scatter Chips (Enemy)</system:String>
+    <system:String x:Key="ChipAttack">Chip Attack</system:String>
+    <system:String x:Key="SIncrease">S-Increase (Enemy)</system:String>
+    <system:String x:Key="Rebound">Rebound</system:String>
+    <system:String x:Key="ViciousInfection">Vicious Infection</system:String>
+    <system:String x:Key="HolyFeather">Holy Feather</system:String>
+    <system:String x:Key="HolyFeatherUp">Holy Feather+</system:String>
+    <system:String x:Key="DevouringNightmares">Devouring Nightmares</system:String>
+    <system:String x:Key="PhantomCat">Phantom Cat</system:String>
+    <system:String x:Key="DROP-00Z">Harmful Cigar_DROP-00Z</system:String>
+    <system:String x:Key="Unknown">Unknown</system:String>
+
+    <system:String x:Key="Monomer">Single/Self</system:String>
+    <system:String x:Key="MoveMonomer">Move + Single</system:String>
+    <system:String x:Key="GoalLine">Target + Line</system:String>
+    <system:String x:Key="PointLine">Point + Line</system:String>
+    <system:String x:Key="MovePointLine">Move + Point + Line</system:String>
+    <system:String x:Key="Circle">Point + Circle</system:String>
+    <system:String x:Key="Sector">Self + Circle/Sector/Line Sector</system:String>
+    <system:String x:Key="All">All</system:String>
+
+    <system:String x:Key="QuestDescription">Quest Description</system:String>
+    <system:String x:Key="FileName">File Name</system:String>
+    <system:String x:Key="QuestGiver">Quest Giver</system:String>
+    <system:String x:Key="RankName">Difficulty Rank</system:String>
+
+    <system:String x:Key="ElementRestrictMultiply">Element Restriction Rate</system:String>
+    <system:String x:Key="LineType">Line Type</system:String>
+    <system:String x:Key="QuartzLineSlot">Quartz Line Slot</system:String>
+    <system:String x:Key="SlotLineNumber">Slot Line Count</system:String>
+    <system:String x:Key="RestrictionId">Restriction ID</system:String>
+
+    <system:String x:Key="Title">Title</system:String>
+    <system:String x:Key="BookId">Book ID</system:String>
+    <system:String x:Key="PageId">Page</system:String>
+    <system:String x:Key="BookText">Content</system:String>
+
+    <system:String x:Key="AchievementCategory">Achievement Category</system:String>
+    <system:String x:Key="AchievementId">Achievement ID</system:String>
+    <system:String x:Key="AchievementObjective1">Activation Condition</system:String>
+    <system:String x:Key="AchievementObjectiveParam1">Activation Parameter</system:String>
+
+    <system:String x:Key="AtBonusName">AT Bonus</system:String>
+    <system:String x:Key="PlayerOrFoeValue">Is Enemy?</system:String>
+    <system:String x:Key="GeneralAtBonusChance">Base AT Bonus Chance</system:String>
+    <system:String x:Key="HpHealSBonusChance">HP Small Heal Bonus Chance</system:String>
+    <system:String x:Key="EpHealSBonusChance">EP Small Heal Bonus Chance</system:String>
+    <system:String x:Key="CpHealSBonusChance">CP Small Heal Bonus Chance</system:String>
+    <system:String x:Key="HpHealLBonusChance">HP Large Heal Bonus Chance</system:String>
+    <system:String x:Key="EpHealLBonusChance">EP Large Heal Bonus Chance</system:String>
+    <system:String x:Key="CpHealLBonusChance">CP Large Heal Bonus Chance</system:String>
+    <system:String x:Key="UnknownBonusChance1">Unknown Bonus Chance 1</system:String>
+    <system:String x:Key="UnknownBonusChance2">Unknown Bonus Chance 2</system:String>
+    <system:String x:Key="UnknownBonusChance3">Unknown Bonus Chance 3</system:String>
+    <system:String x:Key="UnknownBonusChance4">Unknown Bonus Chance 4</system:String>
+    <system:String x:Key="UnknownBonusChance5">Unknown Bonus Chance 5</system:String>
+    <system:String x:Key="UnknownBonusChance6">Unknown Bonus Chance 6</system:String>
+    <system:String x:Key="UnknownBonusChance7">Unknown Bonus Chance 7</system:String>
+    <system:String x:Key="UnknownBonusChance8">Unknown Bonus Chance 8</system:String>
+    <system:String x:Key="UnknownBonusChance9">Unknown Bonus Chance 9</system:String>
+    <system:String x:Key="UnknownBonusChance10">Unknown Bonus Chance 10</system:String>
+    <system:String x:Key="UnknownBonusChance11">Unknown Bonus Chance 11</system:String>
+    <system:String x:Key="DifficultyID">Difficulty ID</system:String>
+    <system:String x:Key="PlayerDamageMultiplier">Player Damage Multiplier</system:String>
+    <system:String x:Key="EnemyDamageMultiplier">Enemy Damage Multiplier</system:String>
+    <system:String x:Key="PlayerStunDamageMultiplier">Player Stun Damage Multiplier</system:String>
+    <system:String x:Key="HpOrUnknownMulti1">Player HP Multiplier</system:String>
+    <system:String x:Key="HpOrUnknownMulti2">Enemy HP Multiplier</system:String>
+    <system:String x:Key="EnemySpdMultiplier">Enemy Speed Multiplier</system:String>
+    <system:String x:Key="ExpBonus">EXP Bonus</system:String>
+
+    <system:String x:Key="CharFullName">Character Full Name</system:String>
+    <system:String x:Key="CharFirstName">Character Nickname</system:String>
+    <system:String x:Key="ScenaFile">Scenario File</system:String>
+    <system:String x:Key="Affiliation">Affiliation</system:String>
+    <system:String x:Key="Occupation">Occupation</system:String>
+    <system:String x:Key="Bonus">Bonus</system:String>
+    <system:String x:Key="ItemName">Item Name</system:String>
+    <system:String x:Key="ItemDescription">Item Description</system:String>
+
+    <system:String x:Key="AttachName">Attachment Name</system:String>
+
+    <system:String x:Key="FilePath">File Path</system:String>
+
+    <system:String x:Key="EventName">Event Name</system:String>
+
+    <system:String x:Key="PlaceName">Place Name</system:String>
+    <system:String x:Key="PlaceNameHighlight">Place Highlight</system:String>
+    <system:String x:Key="Place">Place</system:String>
+    <system:String x:Key="JumpFile">Jump File</system:String>
+    <system:String x:Key="XCoordinate">X Coordinate</system:String>
+    <system:String x:Key="YCoordinate">Y Coordinate</system:String>
+    <system:String x:Key="ZCoordinate">Z Coordinate</system:String>
+
+    <system:String x:Key="Scena">Scenario</system:String>
+    <system:String x:Key="ItemList">Item List</system:String>
+
+    <system:String x:Key="NoteText">Note Text</system:String>
+
+    <system:String x:Key="MainTitle">The Legend of Heroes: Kuro no Kiseki Mod Tool</system:String>
+    <system:String x:Key="File">File</system:String>
+    <system:String x:Key="Setting">Settings</system:String>
+    <system:String x:Key="Help">Help</system:String>
+    <system:String x:Key="About">About</system:String>
+    <system:String x:Key="TBLEdit">TBL Edit</system:String>
+    <system:String x:Key="LogPanel">Log Panel</system:String>
+    <system:String x:Key="DebugPanel">Debug Panel</system:String>
+    <system:String x:Key="Test">Test</system:String>
+    <system:String x:Key="OK">OK</system:String>
+    <system:String x:Key="AddItem">Add Item</system:String>
+    <system:String x:Key="Browse">Browse...</system:String>
+    <system:String x:Key="GameRootPath">Game Root Path:</system:String>
+    <system:String x:Key="ScriptOutputPath">Script Output Path:</system:String>
+    <system:String x:Key="TableLanguage">Table Language:</system:String>
+    <system:String x:Key="AppLanguage">Application Language:</system:String>
+    <system:String x:Key="Save">Save</system:String>
+    <system:String x:Key="Cancel">Cancel</system:String>
+
+    <system:String x:Key="FirstRunTip">Please configure settings before running the application!</system:String>
+    <system:String x:Key="Loadding">Loading...</system:String>
+    <system:String x:Key="Loaded">Loaded!</system:String>
+    <system:String x:Key="CopySuccess">Copied successfully!</system:String>
+    <system:String x:Key="Saving">Saving...</system:String>
+    <system:String x:Key="Saved">Saved!</system:String>
+    <system:String x:Key="Decompiling">Decompiling...</system:String>
+    <system:String x:Key="Decompiled">Decompiled!</system:String>
+    <system:String x:Key="Compiling">Compiling...</system:String>
+    <system:String x:Key="Compiled">Compilation complete!</system:String>
+    <system:String x:Key="WarningCFG">Irreducible flow graph encountered!</system:String>
+    <system:String x:Key="ICFGWarning">Function contains irreducible flow graph</system:String>
+    <system:String x:Key="DecompileScript">Decompile Script</system:String>
+    <system:String x:Key="CompileScript">Compile Script</system:String>
+</ResourceDictionary>

@@ -11,6 +11,7 @@ namespace KnKModTools.Helper
     {
         public static readonly string LogPath = @".\Log.txt";
         public static StreamWriter LogWriter;
+        private static readonly object _lock = new object();
         public static void Run()
         {
             LogWriter = new StreamWriter(LogPath);
@@ -20,8 +21,11 @@ namespace KnKModTools.Helper
         {
             Task.Run(() =>
             {
-                LogWriter.WriteLine(log);
-                LogWriter.Flush();
+                lock (_lock)
+                {
+                    LogWriter.WriteLine(log);
+                    LogWriter.Flush();
+                }
             });
         }
 

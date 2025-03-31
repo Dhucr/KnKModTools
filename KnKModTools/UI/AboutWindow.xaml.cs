@@ -23,7 +23,7 @@ namespace KnKModTools.UI
         public AboutWindow()
         {
             InitializeComponent();
-            ShowOT.Text = "Author: Dhucr\nVersion:0.1-beta";
+            ShowOT.Text = "Author: Dhucr\nVersion:0.6-beta";
         }
 
         private void GoGithub_Click(object sender, RoutedEventArgs e)

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using KnKModTools.Localization;
+using System.Windows;
 
 namespace KnKModTools
 {
@@ -34,7 +35,7 @@ namespace KnKModTools
     {
         private string _resourceKey;
 
-        public string DisplayName => GetDisplayName();
+        public string DisplayName => LanguageManager.GetString(_resourceKey);
 
         public bool UseLink { get; set; }
 

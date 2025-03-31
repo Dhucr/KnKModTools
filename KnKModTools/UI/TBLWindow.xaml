@@ -6,13 +6,14 @@
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="window"
-    Title="{StaticResource MainTitle}"
+    Title="{DynamicResource MainTitle}"
     Width="1400"
     Height="800"
+    Closed="Window_Closed"
     Icon="/Resources/Icons/knk.ico"
     KeyDown="Window_KeyDown"
     WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d" Closed="Window_Closed">
+    mc:Ignorable="d">
     <Grid>
         <!--  定义三行布局：菜单栏、工具栏、工作区  -->
         <Grid.RowDefinitions>
@@ -31,11 +32,11 @@
             hc:TitleElement.Foreground="#333333"
             FontFamily="{StaticResource GlobalFont}"
             FontSize="{StaticResource GlobalFontSize}">
-            <MenuItem Header="{StaticResource File}">
-                <MenuItem Click="Setting_MenuItem_Click" Header="{StaticResource Setting}" />
+            <MenuItem Header="{DynamicResource File}">
+                <MenuItem Click="Setting_MenuItem_Click" Header="{DynamicResource Setting}" />
             </MenuItem>
-            <MenuItem Header="{StaticResource Help}">
-                <MenuItem Click="About_MenuItem_Click" Header="{StaticResource About}" />
+            <MenuItem Header="{DynamicResource Help}">
+                <MenuItem Click="About_MenuItem_Click" Header="{DynamicResource About}" />
             </MenuItem>
         </Menu>
 
@@ -54,6 +55,12 @@
                     Click="LoadScpBtn_Click"
                     Style="{StaticResource ButtonIcon}" />
                 <Separator />
+                <Button
+                    x:Name="ComplieScpBtn"
+                    hc:IconElement.Geometry="{StaticResource CompileGeometry}"
+                    Click="ComplieScpBtn_Click"
+                    Style="{StaticResource ButtonIcon}" />
+                <Separator />
             </ToolBar>
         </ToolBarTray>
 
@@ -63,7 +70,7 @@
             Margin="5"
             IsAnimationEnabled="True"
             IsDraggable="True">
-            <hc:TabItem Header="{StaticResource TBLEdit}">
+            <hc:TabItem Header="{DynamicResource TBLEdit}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <!--  文件列表列（添加最小宽度限制）  -->
@@ -111,7 +118,7 @@
             </hc:TabItem>
 
             <!--  保留日志面板  -->
-            <hc:TabItem Header="{StaticResource LogPanel}">
+            <hc:TabItem Header="{DynamicResource LogPanel}">
                 <TextBox
                     FontFamily="{StaticResource GlobalFont}"
                     FontSize="{StaticResource GlobalFontSize}"
@@ -120,7 +127,7 @@
                     VerticalScrollBarVisibility="Auto" />
             </hc:TabItem>
             <!--  测试面板  -->
-            <hc:TabItem Header="{StaticResource DebugPanel}" Loaded="TabItem_Loaded">
+            <hc:TabItem Header="{DynamicResource DebugPanel}" Loaded="TabItem_Loaded">
                 <Grid>
                     <!--  定义网格列  -->
                     <Grid.ColumnDefinitions>
@@ -169,7 +176,7 @@
                             <Button
                                 Margin="0,5"
                                 Click="Button_Click"
-                                Content="{StaticResource OK}"
+                                Content="{DynamicResource OK}"
                                 FontFamily="{StaticResource GlobalFont}"
                                 FontSize="{StaticResource GlobalFontSize}" />
                         </StackPanel>
@@ -190,7 +197,7 @@
                             <Button
                                 Margin="0,5"
                                 Click="StringToSingle_Click"
-                                Content="{StaticResource OK}"
+                                Content="{DynamicResource OK}"
                                 FontFamily="{StaticResource GlobalFont}"
                                 FontSize="{StaticResource GlobalFontSize}" />
                         </StackPanel>
@@ -233,7 +240,7 @@
                         Grid.Column="0"
                         Margin="5"
                         Click="Button_Click_1"
-                        Content="{StaticResource Test}"
+                        Content="{DynamicResource Test}"
                         FontFamily="{StaticResource GlobalFont}"
                         FontSize="{StaticResource GlobalFontSize}" />
                 </Grid>

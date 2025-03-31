@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using KnKModTools.UI;
 using System.Collections;
 using System.Text;
@@ -62,7 +63,7 @@ namespace KnKModTools
                 sb.Append(',');
             }
             Clipboard.SetText(sb.ToString().TrimEnd(','));
-            UIData.ShowMessage(Utilities.GetDisplayName("CopySuccess"), HandyControl.Data.InfoType.Success, 1);
+            UIData.ShowMessage(LanguageManager.GetString("CopySuccess"), HandyControl.Data.InfoType.Success, 1);
         }
     }
 }

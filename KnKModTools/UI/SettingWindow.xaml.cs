@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System.IO;
@@ -23,6 +24,7 @@ namespace KnKModTools.UI
         private string _gameRootPath;
         private string _scriptOutputPath;
         private string _tableLanguage = "sc";
+        private string _applicationLanguage = "zh-CN";
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -67,6 +69,9 @@ namespace KnKModTools.UI
                     GameRootPath = setting.RootDirectory;
                     ScriptOutputPath = setting.OutputDir;
                     TableLanguage = setting.Language;
+                    _applicationLanguage = setting.ApplicationLanguage;
+                    AppLangCombo.SelectedItem = AppLangCombo.Items.Cast<ComboBoxItem>()
+                        .FirstOrDefault(item => item.Tag.ToString() == setting.ApplicationLanguage);
                 }
             }
         }
@@ -111,6 +116,7 @@ namespace KnKModTools.UI
                 RootDirectory = GameRootPath,
                 OutputDir = ScriptOutputPath,
                 Language = TableLanguage,
+                ApplicationLanguage = _applicationLanguage,
                 ThreadCount = threadCount
             };
             FileDataHelper.SaveJson(GlobalSetting.SettingFile, setting);
@@ -128,5 +134,15 @@ namespace KnKModTools.UI
 
         protected virtual void OnPropertyChanged(string propertyName)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private void AppLangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (AppLangCombo.SelectedItem is ComboBoxItem selectedItem && 
+                selectedItem.Tag is string cultureCode)
+            {
+                _applicationLanguage = cultureCode;
+                LanguageManager.SetLanguage(cultureCode);
+            }
+        }
     }
 }

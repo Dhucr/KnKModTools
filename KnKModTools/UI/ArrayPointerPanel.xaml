@@ -82,7 +82,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Click="AddItemBtn_Click"
-            Content="{StaticResource AddItem}"
+            Content="{DynamicResource AddItem}"
             FontFamily="{StaticResource GlobalFont}"
             FontSize="{StaticResource GlobalFontSize}" />
 

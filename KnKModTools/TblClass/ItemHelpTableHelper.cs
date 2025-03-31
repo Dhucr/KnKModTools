@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using System.IO;
 using static KnKModTools.TblClass.DataPoolManager;
 
@@ -258,27 +259,27 @@ namespace KnKModTools.TblClass
 
             var add = new SkillEffectHelpDataAdd[]
             {
-                new SkillEffectHelpDataAdd(0, Utilities.GetDisplayName("Null")),
-                new SkillEffectHelpDataAdd(3, Utilities.GetDisplayName("WildernessPA")),
-                new SkillEffectHelpDataAdd(4, Utilities.GetDisplayName("WildernessMA")),
-                new SkillEffectHelpDataAdd(5, Utilities.GetDisplayName("Wilderness5")),
-                new SkillEffectHelpDataAdd(6, Utilities.GetDisplayName("WildernessPowerA")),
-                new SkillEffectHelpDataAdd(9, Utilities.GetDisplayName("Wilderness9")),
-                new SkillEffectHelpDataAdd(25, Utilities.GetDisplayName("KnockUp")),
-                new SkillEffectHelpDataAdd(12, Utilities.GetDisplayName("CombatPA")),
-                new SkillEffectHelpDataAdd(15, Utilities.GetDisplayName("CombatMA")),
-                new SkillEffectHelpDataAdd(7, Utilities.GetDisplayName("YoldaShadow")),
-                new SkillEffectHelpDataAdd(8, Utilities.GetDisplayName("ScatterChips")),
-                new SkillEffectHelpDataAdd(20, Utilities.GetDisplayName("ChipAttack")),
-                new SkillEffectHelpDataAdd(54, Utilities.GetDisplayName("SIncrease")),
-                new SkillEffectHelpDataAdd(251, Utilities.GetDisplayName("Rebound")),
-                new SkillEffectHelpDataAdd(255, Utilities.GetDisplayName("ViciousInfection")),
-                new SkillEffectHelpDataAdd(231, Utilities.GetDisplayName("HolyFeather")),
-                new SkillEffectHelpDataAdd(23, Utilities.GetDisplayName("HolyFeatherUp")),
-                new SkillEffectHelpDataAdd(248, Utilities.GetDisplayName("DevouringNightmares")),
-                new SkillEffectHelpDataAdd(249, Utilities.GetDisplayName("PhantomCat")),
-                new SkillEffectHelpDataAdd(252, Utilities.GetDisplayName("DROP-00Z")),
-                new SkillEffectHelpDataAdd(24, Utilities.GetDisplayName("Unknown"))
+                new SkillEffectHelpDataAdd(0, LanguageManager.GetString("Null")),
+                new SkillEffectHelpDataAdd(3, LanguageManager.GetString("WildernessPA")),
+                new SkillEffectHelpDataAdd(4, LanguageManager.GetString("WildernessMA")),
+                new SkillEffectHelpDataAdd(5, LanguageManager.GetString("Wilderness5")),
+                new SkillEffectHelpDataAdd(6, LanguageManager.GetString("WildernessPowerA")),
+                new SkillEffectHelpDataAdd(9, LanguageManager.GetString("Wilderness9")),
+                new SkillEffectHelpDataAdd(25, LanguageManager.GetString("KnockUp")),
+                new SkillEffectHelpDataAdd(12, LanguageManager.GetString("CombatPA")),
+                new SkillEffectHelpDataAdd(15, LanguageManager.GetString("CombatMA")),
+                new SkillEffectHelpDataAdd(7, LanguageManager.GetString("YoldaShadow")),
+                new SkillEffectHelpDataAdd(8, LanguageManager.GetString("ScatterChips")),
+                new SkillEffectHelpDataAdd(20, LanguageManager.GetString("ChipAttack")),
+                new SkillEffectHelpDataAdd(54, LanguageManager.GetString("SIncrease")),
+                new SkillEffectHelpDataAdd(251, LanguageManager.GetString("Rebound")),
+                new SkillEffectHelpDataAdd(255, LanguageManager.GetString("ViciousInfection")),
+                new SkillEffectHelpDataAdd(231, LanguageManager.GetString("HolyFeather")),
+                new SkillEffectHelpDataAdd(23, LanguageManager.GetString("HolyFeatherUp")),
+                new SkillEffectHelpDataAdd(248, LanguageManager.GetString("DevouringNightmares")),
+                new SkillEffectHelpDataAdd(249, LanguageManager.GetString("PhantomCat")),
+                new SkillEffectHelpDataAdd(252, LanguageManager.GetString("DROP-00Z")),
+                new SkillEffectHelpDataAdd(24, LanguageManager.GetString("Unknown"))
             };
             TBL.SubHeaderMap.Add("SkillEffectHelpDataAdd", add);
 

@@ -1,4 +1,5 @@
 ﻿using KnKModTools.Helper;
+using KnKModTools.Localization;
 using KnKModTools.UI;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -125,8 +126,9 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else
             {
-                UIData.ShowMessage(Utilities.GetDisplayName("WarningCFG"), 
+                UIData.ShowMessage(LanguageManager.GetString("WarningCFG"), 
                     HandyControl.Data.InfoType.Warning);
+                ctx.IsIrreducibleCFG = true;
             }
             return null;
         }
@@ -191,8 +193,9 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else
             {
-                UIData.ShowMessage(Utilities.GetDisplayName("WarningCFG"),
+                UIData.ShowMessage(LanguageManager.GetString("WarningCFG"),
                     HandyControl.Data.InfoType.Warning);
+                ctx.IsIrreducibleCFG = true;
             }
             return null;
         }
@@ -577,6 +580,8 @@ namespace KnKModTools.DatClass.Decomplie
 
             if (!isTF && falseBlock.Type != BlockType.IFFlase) return false;
 
+            if (core.HasCallInstruction(falseBlock)) return false;
+
             var isIfTrue = trueBlock.Type == BlockType.Jump || trueBlock.Type == BlockType.Exit;
 
             if (falseBlock?.TrueSuccessors.Count == 0) return false;
@@ -646,6 +651,8 @@ namespace KnKModTools.DatClass.Decomplie
                     trueBlocks = nextBlock?.TrueSuccessors;
                 }
 
+                if (falseBlocks.Count >= 2 && nextBlock.Equals(falseBlocks[^2])) return true;
+
                 var isIfTrue = trueBlock?.Type == BlockType.Jump || trueBlock?.Type == BlockType.Exit;
                 if (!isIfTrue) return false;
             }
@@ -659,11 +666,12 @@ namespace KnKModTools.DatClass.Decomplie
                 var typeCheck = isIfTrue && isJump;
                 if (!typeCheck) return false;
 
-                if (trueBlock?.Type != BlockType.Exit)
+                if (trueBlock?.Type != BlockType.Exit && jumpBlock?.Type != BlockType.Exit)
                 {
                     InStruction? lastInTrueBlock = trueBlock?.Instructions.LastOrDefault();
 
                     InStruction? jump = jumpBlock?.Instructions.LastOrDefault();
+                    
                     var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
 
                     if (!targetEquals) return false;
@@ -675,6 +683,10 @@ namespace KnKModTools.DatClass.Decomplie
             var list = new List<byte> { 2, 3, 7, 9 };
             List<InStruction>? conBlock1 = falseBlock?.Instructions;
             List<InStruction>? conBlock2 = header?.Instructions;
+
+            if (conBlock1 is null || conBlock2 is null ||
+                conBlock1.Count < 4 || conBlock2.Count < 4)
+                return false;
 
             var min = Math.Min(conBlock1.Count, conBlock2.Count);
             if (conBlock1[conBlock1.Count - 2].Code == 21 &&
