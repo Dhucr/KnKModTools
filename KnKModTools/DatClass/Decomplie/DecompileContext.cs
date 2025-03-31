@@ -1,6 +1,4 @@
-﻿using KnKModTools.Helper;
-
-namespace KnKModTools.DatClass.Decomplie
+﻿namespace KnKModTools.DatClass.Decomplie
 {
     #region 上下文与结构定义
 
@@ -25,6 +23,7 @@ namespace KnKModTools.DatClass.Decomplie
         public bool IsIrreducibleCFG = false;
 
         public LoopContext Loop = new();
+
         public class LoopContext
         {
             public bool IsInLoop = false;
@@ -32,7 +31,7 @@ namespace KnKModTools.DatClass.Decomplie
             public uint BreakAddr;
             public uint EndAddr;
 
-            public void EnterLoop(uint whileAddr, uint breakAddr, 
+            public void EnterLoop(uint whileAddr, uint breakAddr,
                 uint endAddr, bool isInLoop = true)
             {
                 IsInLoop = isInLoop;
@@ -61,8 +60,8 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 _ctx = ctx;
                 _loop = new LoopContext();
-                _loop.EnterLoop(_ctx.Loop.WhileAddr, 
-                    _ctx.Loop.BreakAddr, _ctx.Loop.EndAddr, 
+                _loop.EnterLoop(_ctx.Loop.WhileAddr,
+                    _ctx.Loop.BreakAddr, _ctx.Loop.EndAddr,
                     _ctx.Loop.IsInLoop);
             }
 

@@ -222,9 +222,8 @@ namespace KnKModTools
             //tbl.Handler.InserNode(newNode, tbl.ConditionHelpList.Last(), data);
         }
 
-
         public static void Log(string log)
-        { 
+        {
         }
 
         public static void Log2(string name, string log)

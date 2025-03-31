@@ -412,7 +412,7 @@ namespace KnKModTools.DatClass
                     reader.BaseStream.Position = originalPosition;
                     text = text.Replace("\n", "\\n");
                     return text;
-                    //return "\"" + text + "\"";
+                //return "\"" + text + "\"";
                 //default: return $"0x{actualValue:X}";
                 default: return (uint)actualValue;
             }
@@ -478,6 +478,7 @@ namespace KnKModTools.DatClass
                 writer.Write(func.NameOff);
             }
         }
+
         private void WriteGlobalVariables(BinaryWriter writer)
         {
             foreach (var var in VariableIns)
@@ -523,6 +524,7 @@ namespace KnKModTools.DatClass
                 }
             }
         }
+
         private static void WriteValue(BinaryWriter bw, object value)
         {
             switch (value)
@@ -530,18 +532,23 @@ namespace KnKModTools.DatClass
                 case byte bVal:
                     bw.Write(bVal);
                     break;
+
                 case ushort sVal:
                     bw.Write(sVal);
                     break;
+
                 case uint uVal:
                     bw.Write(uVal);
                     break;
+
                 case int iVal:
                     bw.Write(iVal);
                     break;
+
                 case float fVal:
                     bw.Write(fVal);
                     break;
+
                 default:
                     throw new ArgumentException($"Unsupported type: {value?.GetType().Name}");
             }

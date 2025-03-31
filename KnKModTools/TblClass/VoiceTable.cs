@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KnKModTools.TblClass
+﻿namespace KnKModTools.TblClass
 {
     public class VoiceTable : TBL
     {
@@ -45,5 +39,4 @@ namespace KnKModTools.TblClass
         [DataPoolPointer(DataType.NullTerminatedString)]
         public long Text { get; set; }
     }
-
 }

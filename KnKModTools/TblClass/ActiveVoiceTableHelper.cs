@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.IO;
+﻿using System.IO;
 using static KnKModTools.TblClass.DataPoolManager;
 
 namespace KnKModTools.TblClass
@@ -104,6 +103,4 @@ namespace KnKModTools.TblClass
             bw.Write(obj.Empty2);
         }
     }
-
 }
-

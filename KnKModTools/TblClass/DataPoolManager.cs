@@ -454,7 +454,7 @@ namespace KnKModTools.TblClass
                 var offset = GetOffset(current);
                 var key = new OffsetKey(offset, current.Value.Property);
 
-                if(_linkedListMapping.TryGetValue(current, out var oldKey))
+                if (_linkedListMapping.TryGetValue(current, out var oldKey))
                 {
                     _offsetMapping.Remove(oldKey);
                 }

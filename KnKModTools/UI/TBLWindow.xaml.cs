@@ -7,14 +7,12 @@ using KnKModTools.DatClass.Decomplie;
 using KnKModTools.Helper;
 using KnKModTools.Localization;
 using KnKModTools.TblClass;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Window = System.Windows.Window;
 
 namespace KnKModTools.UI
@@ -310,8 +308,10 @@ namespace KnKModTools.UI
                         using var sw = new StreamWriter(
                             Path.Combine(GlobalSetting.Setting.OutputDir,
                             Path.GetFileNameWithoutExtension(file) + ".js"));
-                        LogHelper.Log($"{LanguageManager.GetString("DecompileScript")}:{file}");
-                        sw.Write(core.DecompileDatScript());
+                        var code = core.DecompileDatScript();
+                        LogHelper.Log($"{LanguageManager.GetString("DecompileScript")}:{file}\n" +
+                            core.ICFGFunctions.ToString());
+                        sw.Write(code);
                         sw.Flush();
                     }
                     catch (Exception ex)
@@ -336,7 +336,7 @@ namespace KnKModTools.UI
             {
                 Filter = "JavaScript Files (*.js)|*.js",
                 Multiselect = true,
-                InitialDirectory = GlobalSetting.ScriptDirectory,
+                InitialDirectory = GlobalSetting.Setting.OutputDir,
                 Title = LanguageManager.GetString("CompileScript")
             };
             if (dialog.ShowDialog() == false)

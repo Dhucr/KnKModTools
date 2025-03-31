@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
 
 namespace KnKModTools.DatClass.Complie
 {
@@ -11,6 +6,7 @@ namespace KnKModTools.DatClass.Complie
     {
         private static readonly Regex ParamRegex = new(@"@param\s+(\w+):\s*(.+)");
         private static readonly Regex MetaRegex = new(@"@(hash|unknown1|unknown2)\s+([\wx]+)");
+
         public void Parse(string comment, Function func)
         {
             var strs = comment.Split('\n');
@@ -33,6 +29,7 @@ namespace KnKModTools.DatClass.Complie
                 }
             }
         }
+
         private void HandleParam(Function metadata, string paramName, string paramValue)
         {
             paramValue = paramValue.Replace(" ", "");
@@ -47,12 +44,14 @@ namespace KnKModTools.DatClass.Complie
                     metadata.InArgs = GetArgs();
                     metadata.VarIn = (byte)metadata.InArgs.Length;
                     break;
+
                 case "OutArgs":
                     metadata.OutArgs = GetArgs();
                     metadata.VarOut = (byte)metadata.OutArgs.Length;
                     break;
             }
         }
+
         private void HandleMetadata(Function metadata, string key, string value)
         {
             switch (key.ToLower())
@@ -60,14 +59,17 @@ namespace KnKModTools.DatClass.Complie
                 case "hash":
                     metadata.Hash = Convert.ToUInt32(value);
                     break;
+
                 case "unknown1":
                     metadata.Unknown1 = Convert.ToByte(value);
                     break;
+
                 case "unknown2":
                     metadata.Unknown2 = Convert.ToByte(value);
                     break;
             }
         }
+
         private object ParseValue(string value)
         {
             if (value.StartsWith("\"") && value.EndsWith("\""))

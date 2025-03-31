@@ -137,7 +137,7 @@ namespace KnKModTools.UI
 
         private void AppLangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (AppLangCombo.SelectedItem is ComboBoxItem selectedItem && 
+            if (AppLangCombo.SelectedItem is ComboBoxItem selectedItem &&
                 selectedItem.Tag is string cultureCode)
             {
                 _applicationLanguage = cultureCode;

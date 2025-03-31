@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace KnKModTools.Helper
 {
@@ -12,6 +7,7 @@ namespace KnKModTools.Helper
         public static readonly string LogPath = @".\Log.txt";
         public static StreamWriter LogWriter;
         private static readonly object _lock = new object();
+
         public static void Run()
         {
             LogWriter = new StreamWriter(LogPath);

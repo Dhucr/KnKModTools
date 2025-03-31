@@ -1,5 +1,4 @@
-﻿using KnKModTools.Helper;
-using KnKModTools.Localization;
+﻿using KnKModTools.Localization;
 using System.IO;
 using static KnKModTools.TblClass.DataPoolManager;
 

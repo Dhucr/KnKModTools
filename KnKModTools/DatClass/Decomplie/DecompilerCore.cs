@@ -1,9 +1,6 @@
-﻿using KnKModTools.Helper;
-using KnKModTools.Localization;
-using System.Collections.Generic;
-using System.Linq;
+﻿using KnKModTools.Localization;
+using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Documents;
 
 namespace KnKModTools.DatClass.Decomplie
 {
@@ -18,6 +15,8 @@ namespace KnKModTools.DatClass.Decomplie
         private readonly DatScript _datScript;
 
         private readonly CodeGenerate _codeGenerate = new();
+
+        public StringBuilder ICFGFunctions = new();
 
         private readonly List<IInstructionHandler> _handlers =
         [
@@ -59,6 +58,7 @@ namespace KnKModTools.DatClass.Decomplie
 
         public string DecompileDatScript()
         {
+            ICFGFunctions.Clear();
             var funcs = new List<string>();
             foreach (Function func in _datScript.Functions)
             {
@@ -89,10 +89,10 @@ namespace KnKModTools.DatClass.Decomplie
             }
 
             AstNode func = BuildFunction(context, function.InStructions);
-            
+
             if (context.IsIrreducibleCFG)
             {
-                LogHelper.Log($"{function.Name}:{LanguageManager.GetString("ICFGWarning")}");
+                ICFGFunctions.AppendLine($"{function.Name}:{LanguageManager.GetString("ICFGWarning")}");
                 return "";
             }
 
@@ -145,6 +145,7 @@ namespace KnKModTools.DatClass.Decomplie
             }
             return rootBlock;
         }
+
         private void BuildBaseBlocks(DecompileContext ctx,
     InStruction[] instructions, HashSet<uint> jumpTargets)
         {
@@ -168,7 +169,6 @@ namespace KnKModTools.DatClass.Decomplie
                     shouldSplit = true;
                 }
 
-                
                 if (shouldSplit && currentBlock.Instructions.Count > 0)
                 {
                     currentBlock = new BasicBlock();
@@ -265,15 +265,15 @@ namespace KnKModTools.DatClass.Decomplie
                 }
             }
         }
-        
+
         private void RemoveLastBlock(DecompileContext ctx, BasicBlock block)
         {
             var last = ctx.Blocks.LastOrDefault();
-            if(block.TrueSuccessors != null && block.TrueSuccessors.Count > 0)
+            if (block.TrueSuccessors != null && block.TrueSuccessors.Count > 0)
             {
                 block.TrueSuccessors.Remove(last);
             }
-            if(block.FalseSuccessors != null && block.FalseSuccessors.Count > 0)
+            if (block.FalseSuccessors != null && block.FalseSuccessors.Count > 0)
             {
                 block.FalseSuccessors.Remove(last);
             }
@@ -312,30 +312,30 @@ namespace KnKModTools.DatClass.Decomplie
             while (true)
             {
                 var isJumpBlock = GetCode(falseBlock) == 15;
-                if(isJumpBlock || !isJumpBlock && 
+                if (isJumpBlock || !isJumpBlock &&
                     falseBlock.StartAddr >= blockRange)
                 {
                     falseSuccessors.Add(falseBlock);
                 }
-                
+
                 var nextBlock = GetNextBlock(ctx, falseBlock);
                 if (isJumpBlock)
                 {
                     nextBlock = GetBlock(ctx, GetAddress(falseBlock));
                     var temp = GetPriviousBlock(ctx, nextBlock);
-                    if(temp is not null && GetCode(temp) == 11)
+                    if (temp is not null && GetCode(temp) == 11)
                     {
                         blockRange = GetAddress(temp);
                     }
                 }
-                
+
                 if (nextBlock is null) break;
                 if (nextBlock.StartAddr >= endAddr) break;
 
                 falseBlock = nextBlock;
             }
 
-            if(falseSuccessors.Count == 0) return;
+            if (falseSuccessors.Count == 0) return;
             block.FalseSuccessors.AddRange(falseSuccessors);
         }
 
@@ -367,7 +367,6 @@ namespace KnKModTools.DatClass.Decomplie
             if (last is null) return;
             if (!IsBranching(last.Code)) return;
 
-
             endAddr = (uint)last.Operands[0];
             if (endAddr < last.Offset) return;
             if (endAddr == trueBlock.StartAddr) return;
@@ -382,7 +381,7 @@ namespace KnKModTools.DatClass.Decomplie
                 trueBlock = nextBlock;
             }
 
-            if(trueSuccessors.Count == 0) return;
+            if (trueSuccessors.Count == 0) return;
             block.TrueSuccessors.AddRange(trueSuccessors);
         }
 

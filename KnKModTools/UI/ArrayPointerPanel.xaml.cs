@@ -1,5 +1,4 @@
-﻿using KnKModTools.Helper;
-using KnKModTools.Localization;
+﻿using KnKModTools.Localization;
 using KnKModTools.UI;
 using System.Collections;
 using System.Text;

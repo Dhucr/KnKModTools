@@ -1,10 +1,6 @@
 ﻿using KnKModTools.Helper;
 using KnKModTools.Localization;
 using KnKModTools.UI;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace KnKModTools.DatClass.Decomplie
 {
@@ -126,7 +122,7 @@ namespace KnKModTools.DatClass.Decomplie
             }
             else
             {
-                UIData.ShowMessage(LanguageManager.GetString("WarningCFG"), 
+                UIData.ShowMessage(LanguageManager.GetString("WarningCFG"),
                     HandyControl.Data.InfoType.Warning);
                 ctx.IsIrreducibleCFG = true;
             }
@@ -183,7 +179,7 @@ namespace KnKModTools.DatClass.Decomplie
 
                 return node;
             }
-            else if(IsEmptyBlock(trueBlock, falseBlock))
+            else if (IsEmptyBlock(trueBlock, falseBlock))
             {
                 var node = new IfStatementNode
                 {
@@ -272,7 +268,7 @@ namespace KnKModTools.DatClass.Decomplie
             var endAddr = (uint)lastIns.Operands[0];
             var lastJump = header.FalseSuccessors.LastOrDefault();
             var jumpAddr = core.GetAddress(lastJump);
-            
+
             if (jumpAddr == endAddr)
                 return switchNode;
 
@@ -324,7 +320,7 @@ namespace KnKModTools.DatClass.Decomplie
 
             AddCaseNode(ctx, core, header.TrueSuccessors, switchNode, cond[1]);
 
-            BasicBlock block = BuildCaseNode(ctx, core, falseBlock, switchNode, 
+            BasicBlock block = BuildCaseNode(ctx, core, falseBlock, switchNode,
                 type, cond[0], isCheck);
 
             switchNode.DefaultCase = new BlockNode();
@@ -345,7 +341,7 @@ namespace KnKModTools.DatClass.Decomplie
                 if (match.Equals("NotCase")) break;
 
                 AddCaseNode(ctx, core, trueBlocks, switchNode, match);
-                if(ctx.IsIrreducibleCFG) break;
+                if (ctx.IsIrreducibleCFG) break;
 
                 BasicBlock update = core.GetFalseBlock(ctx, ifFalseBlock);
                 if (update == null || update.Type != type) break;
@@ -434,12 +430,13 @@ namespace KnKModTools.DatClass.Decomplie
         #endregion 块节点构建
 
         #region 逻辑结构判断
+
         private static bool IsEmptyBlock(BasicBlock trueBlock, BasicBlock falseBlock)
         {
             return trueBlock == null && falseBlock == null;
         }
 
-        private static bool IsWhileStructure(DecompileContext ctx, 
+        private static bool IsWhileStructure(DecompileContext ctx,
             DecompilerCore core, BasicBlock header, BasicBlock trueBlock)
         {
             if (trueBlock == null) return false;
@@ -471,22 +468,22 @@ namespace KnKModTools.DatClass.Decomplie
             }
 
             // 特征1：真分支没有终止跳转
-            return (trueBlock.Type != BlockType.Jump) || 
+            return (trueBlock.Type != BlockType.Jump) ||
                 (core.GetAddress(block) == core.GetAddress(trueBlock));
         }
 
-        private static bool IsTSingleIfStructure(DecompilerCore core, 
+        private static bool IsTSingleIfStructure(DecompilerCore core,
             BasicBlock trueBlock, BasicBlock falseBlock)
         {
             if (trueBlock == null) return false;
 
             // 特征1：真分支没有终止跳转
-            return trueBlock.Type == BlockType.Jump && 
-                falseBlock.Type == BlockType.Jump && 
+            return trueBlock.Type == BlockType.Jump &&
+                falseBlock.Type == BlockType.Jump &&
                 core.GetAddress(trueBlock) == core.GetAddress(falseBlock);
         }
 
-        private static bool IsFIfElseStructure(DecompileContext ctx, 
+        private static bool IsFIfElseStructure(DecompileContext ctx,
             DecompilerCore core, BasicBlock trueBlock, BasicBlock falseBlock)
         {
             if (trueBlock == null || falseBlock == null) return false;
@@ -527,7 +524,7 @@ namespace KnKModTools.DatClass.Decomplie
             {
                 if (falseBlock?.TrueSuccessors.Count == 0) return false;
                 BasicBlock? jumpBlock = falseBlock?.TrueSuccessors?.LastOrDefault();
-                var hasJumpJump = 
+                var hasJumpJump =
                     jumpBlock?.Type == BlockType.Jump; // 存在JUMP指令
                 var trueJump = core.GetAddress(trueBlock);
 
@@ -561,7 +558,6 @@ namespace KnKModTools.DatClass.Decomplie
                         if (jumpBlock == null)
                             return false;
                     }
-                    
                 }
 
                 return false;
@@ -569,7 +565,7 @@ namespace KnKModTools.DatClass.Decomplie
             return true;
         }
 
-        private static bool IsSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header, 
+        private static bool IsSwitchStructure(DecompileContext ctx, DecompilerCore core, BasicBlock header,
             BasicBlock trueBlock, BasicBlock falseBlock, bool isTF)
         {
             if (falseBlock == null || trueBlock == null) return false;
@@ -671,7 +667,7 @@ namespace KnKModTools.DatClass.Decomplie
                     InStruction? lastInTrueBlock = trueBlock?.Instructions.LastOrDefault();
 
                     InStruction? jump = jumpBlock?.Instructions.LastOrDefault();
-                    
+
                     var targetEquals = (uint)lastInTrueBlock?.Operands[0] == (uint)jump?.Operands[0];
 
                     if (!targetEquals) return false;

@@ -1,11 +1,5 @@
 ﻿using Esprima.Ast;
 using Esprima.Utils;
-using KnKModTools.DatClass.Decomplie;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KnKModTools.DatClass.Complie
 {
@@ -50,17 +44,21 @@ namespace KnKModTools.DatClass.Complie
                 case 0 or 1 or 9 or 10 or 39:
                     operands[0] = Convert.ToByte(operands[0]);
                     break;
+
                 case 2 or 3 or 4 or 5 or 6 or 7 or 8:
                     operands[0] = Convert.ToInt32(operands[0]);
                     break;
+
                 case 11 or 14 or 15 or 37 or 40:
                     if (operands[0] is Label)
                         return;
                     operands[0] = Convert.ToUInt32(operands[0]);
                     break;
+
                 case 34 or 35:
                     operands[2] = Convert.ToByte(operands[2]);
                     break;
+
                 case 36:
                     operands[0] = Convert.ToByte(operands[0]);
                     operands[1] = Convert.ToByte(operands[1]);
@@ -281,6 +279,7 @@ namespace KnKModTools.DatClass.Complie
                     case int iVal:
                         ins.Operands[1] = -iVal;
                         break;
+
                     case float fVal:
                         ins.Operands[1] = -fVal;
                         break;
@@ -496,7 +495,6 @@ namespace KnKModTools.DatClass.Complie
             {
                 ProcessSyncCrossScriptCall(member, args);
             }
-
         }
 
         private void TryAddInstruction(InStruction ins)

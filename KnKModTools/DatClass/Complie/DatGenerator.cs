@@ -1,10 +1,6 @@
 ﻿using KnKModTools.Helper;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace KnKModTools.DatClass.Complie
 {
@@ -26,6 +22,7 @@ namespace KnKModTools.DatClass.Complie
 
             return dat;
         }
+
         private static void InitializeHeader(TempDatStruct tempDat, DatScript dat, BinaryWriter bw)
         {
             dat.Flag = "#scp";
@@ -41,6 +38,7 @@ namespace KnKModTools.DatClass.Complie
             bw.Write(dat.VariableInCount);
             bw.Write(dat.VariableOutCount);
         }
+
         private static void ProcessFunctionTables(TempDatStruct tempDat, DatScript dat, BinaryWriter bw, MemoryStream ms)
         {
             var funcList = new List<Function>(tempDat.Functions.Count);
@@ -66,6 +64,7 @@ namespace KnKModTools.DatClass.Complie
 
             dat.Functions = funcList.ToArray();
         }
+
         private static void ProcessFunction(TempDatStruct tempDat, DatScript dat, BinaryWriter bw, MemoryStream ms)
         {
             // 处理函数各部分
@@ -96,6 +95,7 @@ namespace KnKModTools.DatClass.Complie
             func.StructOff = 0;
             func.NameOff = 0;
         }
+
         private static void ProcessFunctionSection(Function func, BinaryWriter bw, MemoryStream ms, SectionType sectionType)
         {
             var section = sectionType == SectionType.OutArgs ? func.OutArgs : func.InArgs;
@@ -112,6 +112,7 @@ namespace KnKModTools.DatClass.Complie
                 WriteValue(bw, arg);
             }
         }
+
         private static void ProcessInstructions(Function func, BinaryWriter bw, MemoryStream ms, TempDatStruct tempDat)
         {
             func.Start = (uint)ms.Position;
@@ -132,9 +133,9 @@ namespace KnKModTools.DatClass.Complie
                         WriteValue(bw, op);
                     }
                 }
-
             }
         }
+
         private static void ProcessLabels(Function func)
         {
             foreach (var ins in func.InStructions)
@@ -149,6 +150,7 @@ namespace KnKModTools.DatClass.Complie
                 }
             }
         }
+
         private static void ProcessGlobalVariables(TempDatStruct tempDat, DatScript dat, BinaryWriter bw, MemoryStream ms)
         {
             dat.VariableOff = (uint)ms.Position;
@@ -165,6 +167,7 @@ namespace KnKModTools.DatClass.Complie
             }
             dat.VariableIns = gloVarList.ToArray();
         }
+
         private static void FinalizeScriptData(TempDatStruct tempDat, DatScript dat, BinaryWriter bw)
         {
             var strPool = dat.StringPool;
@@ -202,6 +205,7 @@ namespace KnKModTools.DatClass.Complie
                 }
             }
         }
+
         private static void ProcessStringOperands(InStruction ins, BinaryWriter bw, List<byte> stringPool)
         {
             if (ins.Code == 0)
@@ -216,6 +220,7 @@ namespace KnKModTools.DatClass.Complie
                 }
             }
         }
+
         private static void WriteValue(BinaryWriter bw, object value)
         {
             switch (value)
@@ -223,27 +228,35 @@ namespace KnKModTools.DatClass.Complie
                 case byte bVal:
                     bw.Write(bVal);
                     break;
+
                 case ushort sVal:
                     bw.Write(sVal);
                     break;
+
                 case uint uVal:
                     bw.Write(uVal);
                     break;
+
                 case int iVal:
                     bw.Write(iVal);
                     break;
+
                 case float fVal:
                     bw.Write(fVal);
                     break;
+
                 case double dVal:
                     bw.Write(0);
                     break;
+
                 case Label lVal:
                     bw.Write(0);
                     break;
+
                 case string _:
                     bw.Write(0); // 字符串占位符
                     break;
+
                 default:
                     throw new ArgumentException($"Unsupported type: {value?.GetType().Name}");
             }
@@ -262,12 +275,14 @@ namespace KnKModTools.DatClass.Complie
                     // MSB=1 (0x40000000)，直接存储低30位
                     encodedValue = (uint)(intVal & 0x3FFFFFFF) | 0x40000000;
                     break;
+
                 case float floatVal:
                     // MSB=2 (0x80000000)，将float转为uint并右移2位
                     uint floatBits = BitConverter.ToUInt32(BitConverter.GetBytes(floatVal), 0);
                     uint shiftedValue = floatBits >> 2;
                     encodedValue = (uint)(shiftedValue | 0x80000000);
                     break;
+
                 case string stringVal:
                     // MSB=3 (0xC0000000)，写入字符串并记录偏移量
                     string processedStr = stringVal.Replace("\\n", "\n");
@@ -276,15 +291,18 @@ namespace KnKModTools.DatClass.Complie
                     if (strOffset > 0x3FFFFFFF) throw new InvalidDataException("String offset exceeds 30 bits");
                     encodedValue = (uint)(strOffset | 0xC0000000);
                     break;
+
                 case uint uintVal:
                     // MSB=0，直接存储原始值
                     encodedValue = uintVal;
                     break;
+
                 default:
                     throw new ArgumentException($"Unsupported type: {value.GetType()}");
             }
             return encodedValue;
         }
+
         private static void WriteCString(BinaryWriter writer, string value, List<byte> stringPool)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(value);
@@ -295,5 +313,6 @@ namespace KnKModTools.DatClass.Complie
         }
     }
 
-    internal enum SectionType { OutArgs, InArgs }
+    internal enum SectionType
+    { OutArgs, InArgs }
 }

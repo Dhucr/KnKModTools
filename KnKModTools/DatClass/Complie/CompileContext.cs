@@ -1,9 +1,4 @@
 ﻿using Esprima.Ast;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KnKModTools.DatClass.Complie
 {
@@ -22,6 +17,7 @@ namespace KnKModTools.DatClass.Complie
         public Action<int> Pop;
         public bool IsReturn = false;
         private int _stackDepth;
+
         public int StackDepth
         {
             get => _stackDepth;

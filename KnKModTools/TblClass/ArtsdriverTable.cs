@@ -20,7 +20,6 @@
 
     public class DriverTableData
     {
-        
     }
 
     public class SlotOpenRate
