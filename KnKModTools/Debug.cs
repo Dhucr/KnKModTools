@@ -1,9 +1,15 @@
-﻿using KnKModTools.TblClass;
+﻿using Esprima;
+using Esprima.Ast;
+using Esprima.Utils;
+using KnKModTools.TblClass;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Windows.Documents;
 
 namespace KnKModTools
 {
@@ -225,7 +231,80 @@ namespace KnKModTools
         public static void Log(string log)
         {
         }
+        private static int sum = 0;
+        private static List<FunctionDeclaration> NodeList = [];
+        public static void ScriptApi(string path)
+        {
+            var sb = new StringBuilder();
+            var parser = new JavaScriptParser();
+            var files = Directory.GetFiles(path);
+            foreach(var file in files)
+            {
+                using var sr = new StreamReader(file);
+                var code = sr.ReadToEnd();
+                var program = parser.ParseScript(code);
+                DiGui(program.ChildNodes);
+            }
+            // 转换为排序后的字典 DistinctBy
+            var orderedDict = NodeList.DistinctBy(n => n.Id.Name).OrderBy(x => x.Id.Name).ToList();
+            foreach (var n in orderedDict)
+            {
+                sb.AppendLine(n.ToJavaScriptString(true));
+            }
+            File.WriteAllText("F:\\KnK\\TestOut\\" + "ScriptApi.js", sb.ToString());
+            sb.Clear();
+            NodeList.Clear();
+        }
 
+        private static void DiGui(ChildNodes nodes)
+        {
+            foreach (var node in nodes)
+            {
+                if(node is FunctionDeclaration func)
+                {
+                    sum = 0;
+                    var key = func.Id.Name;
+                    NodeList.Add(func);
+                }
+                else if (node is ReturnStatement ret)
+                {
+                    CheckCall(ret.Argument);
+                    if (sum != 1 && NodeList.Count > 0)
+                    {
+                        NodeList.Remove(NodeList.Last());
+                    }
+                }
+                else
+                {
+                    CheckCall(node);
+                }
+                
+
+                if(node.ChildNodes.Count() > 0)
+                {
+                    DiGui(node.ChildNodes);
+                }
+            }
+        }
+
+        private static void CheckCall(Node? node)
+        {
+            if (node is null) return;
+            if (node is CallExpression call)
+            {
+                if (call.Callee is MemberExpression member)
+                {
+                    if (member.Object is Identifier objIdent && objIdent.Name == "Engine")
+                    {
+                        sum++;
+                    }
+                }
+                else
+                {
+                    sum = -99999;
+                }
+            }
+        }
         public static void Log2(string name, string log)
         {
             using (var sw2 = new StreamWriter("F:\\KnK\\Script\\" + name))

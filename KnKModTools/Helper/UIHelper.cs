@@ -208,8 +208,8 @@ namespace KnKModTools.Helper
             }
             else
             {
-                numericUpDownFactory.SetValue(NumericUpDown.MinimumProperty, 2147483647.0);
-                numericUpDownFactory.SetValue(NumericUpDown.MaximumProperty, -2147483648.0);
+                numericUpDownFactory.SetValue(NumericUpDown.MinimumProperty, -2147483648.0);
+                numericUpDownFactory.SetValue(NumericUpDown.MaximumProperty, 2147483647.0);
                 numericUpDownFactory.SetValue(NumericUpDown.IncrementProperty, 1.0);
             }
 

@@ -225,6 +225,8 @@ namespace KnKModTools.UI
             List<TBL> tbls = Debug.Load();
             //Debug.OrganizeFiles(tbls, "F:\\KnK\\headers");
             TBList.ItemsSource = tbls;
+            /*Debug.ScriptApi("F:\\KnK\\Output");
+            ShowMessage("Ok");*/
             /*
             var test = new Debug();
             test.ComprehensiveTest(tbl);
